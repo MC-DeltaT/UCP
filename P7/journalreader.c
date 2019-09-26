@@ -38,7 +38,7 @@ FILE* openFile(char const* path, int* error)
         file = fopen(path, "r");
         if (!file)
         {
-            perror("Error opening array file");
+            perror("Error opening journal file");
             *error = 1;
         }
     }
