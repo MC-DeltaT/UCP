@@ -81,7 +81,21 @@ void* allocate(size_t size, int* error)
 
 JournalEntry* createEntries(unsigned long count, int* error)
 {
-    return (JournalEntry*)allocate(count * sizeof(JournalEntry), error);
+    JournalEntry* entries = NULL;
+    unsigned long i;
+
+    entries = allocate(count * sizeof(JournalEntry), error);
+    if (!*error)
+    {
+        for (i = 0; i < count; ++i)
+        {
+            entries[i].day = 0;
+            entries[i].month = 0;
+            entries[i].year = 0;
+            entries[i].message = NULL;
+        } 
+    }
+    return entries;
 }
 
 
@@ -103,7 +117,8 @@ void freeEntries(JournalEntry** entries, unsigned long entryCount)
 
 
 /* Reads a line of up to LINE_MAX-1 characters
- * Returns 1 on success, 0 on error or EOF. */
+ * Returns 1 on success, 0 on error or EOF.
+ * Increments lineCount if successful. */
 int readLine(FILE* file, char line[LINE_MAX], unsigned long* lineCount,
              int* error)
 {
@@ -150,7 +165,7 @@ void parseDate(char const* line, unsigned long lineNum,
 
     if (!*error)
     {
-        res = sscanf(line, "%u:%u:%u %n", &entry->day, &entry->month,
+        res = sscanf(line, "%u/%u/%u %n", &entry->day, &entry->month,
                         &entry->year, &n);
         if (res != 3 || n != strlen(line))
         {
@@ -195,6 +210,13 @@ void readEntries(FILE* file, char lineBuffer[LINE_MAX], JournalEntry* entries,
                     parseMessage(lineBuffer, entries + i, error);
                     ++i;
                 }
+                else if (feof(file))
+                {
+                    fprintf(stderr,
+                "Error: expected entry message on line %lu, but got EOF.\n",
+                            *lineCount + 1);
+                    *error = 1;
+                }
             }
         }
 
@@ -210,13 +232,13 @@ void readEntries(FILE* file, char lineBuffer[LINE_MAX], JournalEntry* entries,
 
 unsigned long parseUL(char const* str, int* error)
 {
-    unsigned long res = 0;
+    long res = 0;
     char* end;
 
     if (!*error)
     {
-        res = strtoul(str, &end, 10);
-        if (end == str || (*end != '\0' && !isspace(*end)))
+        res = strtol(str, &end, 10);
+        if (end == str || (*end != '\0' && !isspace(*end)) || res < 0)
         {
             *error = 1;
         }
@@ -302,11 +324,11 @@ int main(int argc, char** argv)
 
     readEntries(file, line, entries, entryCount, &lineCount, &error);
 
-    /* If error is set, argv[2] might be out of bounds, so technically can't
-        dereference argv+2 even though we won't use it anyway. */
+    /* If error is set, argv[1] might be out of bounds, so technically can't
+        dereference argv+1 even though we won't use it anyway. */
     if (!error)
     {
-        entryIdx = parseUL(argv[2], &error);
+        entryIdx = parseUL(argv[1], &error);
     }
 
     printEntry(entries, entryCount, entryIdx, &error);
