@@ -7,7 +7,7 @@
 #include <string.h>
 
 
-/* PUBLIC FUNCTIONS */
+/* PUBLIC INTERFACE */
 
 
 char* concatString(char const* str1, char const* str2)
@@ -23,4 +23,21 @@ char* concatString(char const* str1, char const* str2)
     memcpy(result + len1, str2, len2 + 1ul);
 
     return result;
+}
+
+
+int readUntil(FILE* file, char c, int consume)
+{
+    int read = '\0';
+
+    do {
+        read = fgetc(file);
+    } while(read != c && read != EOF);
+
+    if (!consume && read != EOF)
+    {
+        ungetc(read, file);
+    }
+
+    return read != EOF;
 }

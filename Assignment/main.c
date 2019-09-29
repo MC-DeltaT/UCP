@@ -1,3 +1,5 @@
+/* Program entry point. */
+
 #include "interface.h"
 #include "settings.h"
 
@@ -25,6 +27,11 @@ int main(int argc, char* argv[])
     if (!error)
     {
         settings = readSettings(argv[1], &error);
+    }
+
+    if (!error)
+    {
+        error = !validateSettings(&settings);
     }
 
     if (!error)

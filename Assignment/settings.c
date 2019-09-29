@@ -4,7 +4,7 @@
 
 #include "common.h"
 
-#include <assert.h>
+#include <ctype.h>
 #include <limits.h>
 #include <stdio.h>
 #include <string.h>
@@ -14,20 +14,25 @@
    assumed to be invalid format. */
 #define LINE_LEN_MAX 1024
 
+#define BOARD_ROWS_OPTION 'n'
+#define BOARD_COLUMNS_OPTION 'm'
+#define WIN_REQ_OPTION 'k'
+
 
 /* PRIVATE INTERFACE */
 
 
-/* Contains data needed while parsing an option from a settings file. */
+/* Contains data needed for parsing an option from a settings file. */
 typedef struct {
-    char option;
-    unsigned value;
-    int beenRead;
+    char option;        /* character used in file to indicate option. */
+    unsigned value;     /* value of option. */
+    int beenRead;       /* indicates if this option has been read yet. Does NOT
+                           mean the option specification had to be valid. */
 } OptionData;
 
 
-void setOption(OptionData options[], unsigned optionCount, char optionChar,
-               long optionVal, unsigned lineNum, int* error)
+static void setOption(OptionData options[], unsigned optionCount,
+    char optionChar, long optionVal, unsigned lineNum, int* error)
 {
     OptionData* option = NULL;
     unsigned i;
@@ -35,7 +40,7 @@ void setOption(OptionData options[], unsigned optionCount, char optionChar,
     i = 0;
     while (!option && i < optionCount)
     {
-        if (options[i].option == optionChar)
+        if (tolower(options[i].option) == tolower(optionChar))
         {
             option = options + i;
         }
@@ -47,7 +52,7 @@ void setOption(OptionData options[], unsigned optionCount, char optionChar,
         if (option->beenRead)
         {
             fprintf(stderr,
-                "Error in settings file, line %u: option %c already specified.",
+                "Error in settings file, line %u: option %c already specified.\n",
                 lineNum, optionChar);
             *error = 1;
         }
@@ -56,7 +61,7 @@ void setOption(OptionData options[], unsigned optionCount, char optionChar,
             if (optionVal <= 0 || optionVal > UINT_MAX)
             {
                 fprintf(stderr,
-                    "Error in settings file, line %u: option value out of range.\n",
+                    "Error in settings file, line %u: option value must be non-negative.\n",
                     lineNum);
                 *error = 1;
             }
@@ -77,40 +82,40 @@ void setOption(OptionData options[], unsigned optionCount, char optionChar,
 }
 
 
-void readSettingsLine(FILE* file, OptionData options[], unsigned optionCount,
-                      unsigned* lineCount, int* error)
+static void readSettingsLine(FILE* file, OptionData options[],
+    unsigned optionCount, unsigned* lineCount, int* error)
 {
     char line[LINE_LEN_MAX] = {0};
     char optionChar = '\0';
     long optionVal = 0;
     int invalidFormat = 0;
 
-    if (!*error)
+    if(fgets(line, LINE_LEN_MAX, file))
     {
-        if(fgets(line, LINE_LEN_MAX, file))
+        ++*lineCount;
+        /* Whole line was read. */
+        if (strchr(line, '\n'))
         {
-            ++*lineCount;
-            /* Whole line was read. */
-            if (strchr(line, '\n'))
+            /* Note: can't use %u format specifier, because that, for some
+               ungodly reason, actually accepts negative values, and then wraps
+               them around to large positive values. */
+            if (2 == sscanf(line, "%c=%ld", &optionChar, &optionVal))
             {
-                /* Note: can't use %u format specifier, because that, for some
-                   ungodly reason, actually accepts negative values, and then
-                   wraps them around to large positive values. */
-                if (2 == sscanf(line, "%c=%ld", &optionChar, &optionVal))
-                {
-                    setOption(options, optionCount, optionChar, optionVal,
-                        *lineCount, error);
-                }
-                else
-                {
-                    invalidFormat = 1;
-                }
+                setOption(options, optionCount, optionChar, optionVal,
+                    *lineCount, error);
             }
-            /* Line too long for buffer, we assume it's invalid. */
             else
             {
                 invalidFormat = 1;
             }
+        }
+        /* Line too long for buffer, we assume it's invalid. */
+        else
+        {
+            invalidFormat = 1;
+            /* Read the rest of the line so parsing of the file can continue
+               normally. */
+            readUntil(file, '\n', 1);
         }
 
         if (invalidFormat)
@@ -128,7 +133,7 @@ void readSettingsLine(FILE* file, OptionData options[], unsigned optionCount,
 /* PUBLIC INTERFACE */
 
 
-Settings zeroedSettings()
+Settings zeroedSettings(void)
 {
     Settings settings;
 
@@ -146,23 +151,47 @@ Settings readSettings(char const* filePath, int* error)
     FILE* file = NULL;
     unsigned lineCount = 0;
     /* Note: other members automatically init to 0. */
-    OptionData options[] = {{'m'}, {'n'}, {'k'}};
-    unsigned i;
+    OptionData options[] = {
+        {BOARD_ROWS_OPTION},
+        {BOARD_COLUMNS_OPTION},
+        {WIN_REQ_OPTION}
+    };
+    unsigned i = 0;
 
     file = fopen(filePath, "r");
     if (file)
     {
-        i = 0;
-        while (!*error && !feof(file))
+        /* Want to read entire file even if parse error occurs, to show the
+           user all the errors. */
+        while (!feof(file) && !ferror(file))
         {
             readSettingsLine(file, options, 3, &lineCount, error);
-            ++i;
+        }
+
+        if (ferror(file))
+        {
+            fprintf(stderr, "Error reading settings file \"%s\": ", filePath);
+            perror(NULL);
+            *error = 1;
+        }
+        else
+        {
+            for (i = 0; i < 3; ++i)
+            {
+                if (!options[i].beenRead)
+                {
+                    fprintf(stderr,
+                        "Error in settings file: required option %c was not specified.\n",
+                        options[i].option);
+                    *error = 1;
+                }
+            }
         }
 
         if (!*error)
         {
-            settings.boardRows = options[1].value;
-            settings.boardColumns = options[0].value;
+            settings.boardRows = options[0].value;
+            settings.boardColumns = options[1].value;
             settings.winRequirement = options[2].value;
         }
     }
@@ -173,10 +202,43 @@ Settings readSettings(char const* filePath, int* error)
         *error = 1;
     }
 
-    if (*error)
+    return settings;
+}
+
+
+int validateSettings(Settings const* settings)
+{
+    int result = 1;
+    unsigned boardRows = settings->boardRows;
+    unsigned boardColumns = settings->boardColumns;
+    unsigned winRequirement = settings->winRequirement;
+
+    if (boardRows == 0)
     {
-        settings = zeroedSettings();
+        fprintf(stderr, "Error in settings: %c must be >0.\n",
+            BOARD_ROWS_OPTION);
+        result = 0;
     }
 
-    return settings;
+    if (boardColumns == 0)
+    {
+        fprintf(stderr, "Error in settings: %c must be >0.\n",
+            BOARD_COLUMNS_OPTION);
+        result = 0;
+    }
+
+    if (winRequirement == 0)
+    {
+        fprintf(stderr, "Error in settings: %c must be >0.\n", WIN_REQ_OPTION);
+        result = 0;
+    }
+
+    /* Doesn't make sense to show this if board dimensions are 0. */
+    if (result && winRequirement > boardRows && winRequirement > boardColumns)
+    {
+        printf("Warning: with the set %c, %c and %c values, games can only end in a draw.\n",
+            BOARD_ROWS_OPTION, BOARD_COLUMNS_OPTION, WIN_REQ_OPTION);
+    }
+
+    return result;
 }

@@ -1,8 +1,11 @@
-#ifndef SETTINGS_TEST_H
-#define SETTINGS_TEST_H
+/* Unit tests for the settings module. */
+
+#ifndef TEST_SETTINGS_TEST_H
+#define TEST_SETTINGS_TEST_H
 
 
-void settings_test();
+/* Runs the tests for the settings module. */
+void settingsTest(void);
 
 
 #endif

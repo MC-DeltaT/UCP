@@ -28,8 +28,8 @@ typedef struct {
 
 /* Returns a GameBoard object with all members zeroed out.
    Mainly for debugging purposes so we can initialise GameBoard objects with
-   known values rather than garbage.*/
-GameBoard zeroedGameBoard();
+   known values rather than have them unspecified.*/
+GameBoard zeroedGameBoard(void);
 
 /* Creates a game board from the given parameters. */
 GameBoard createGameBoard(unsigned rows, unsigned columns,

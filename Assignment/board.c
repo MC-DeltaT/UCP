@@ -7,7 +7,7 @@
 #include <stdlib.h>
 
 
-/* PRIVATE FUNCTIONS */
+/* PRIVATE INTERFACE */
 
 
 /* Checks if the given status occurs consecutively enough across the given row
@@ -150,10 +150,10 @@ static int hasWon(GameBoard const* board, CellStatus status)
 
 
 
-/* PUBLIC FUNCTIONS */
+/* PUBLIC INTERFACE */
 
 
-GameBoard zeroedGameBoard()
+GameBoard zeroedGameBoard(void)
 {
     GameBoard board;
 

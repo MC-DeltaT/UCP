@@ -11,10 +11,10 @@
 char* concatString(char const* str1, char const* str2);
 
 /* Reads characters from a file until a given character is encountered.
-   Consumes that character from the file stream.
+   consume controls whether or not that character is consumed from the file.
    On success, returns 1.
    On error or EOF, returns 0. */
-int readUntil(FILE* file, char c);
+int readUntil(FILE* file, char c, int consume);
 
 
 #endif

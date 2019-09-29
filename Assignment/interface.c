@@ -9,7 +9,7 @@
 #include <stdio.h>
 
 
-/* PRIVATE FUNCTIONS */
+/* PRIVATE INTERFACE */
 
 
 /* Prints a game board to stdout. */
@@ -23,14 +23,14 @@ void displayBoard(GameBoard const* board)
     unsigned i = 0;
     unsigned j = 0;
     char cell;
-    
+
     /* Top border. */
     for (i = 0; i < horizontalDividerWidth; ++i)
     {
         printf("-");
     }
     printf("\n");
-    
+
     /* Board body. */
     for (i = 0; i < board->rows; ++i)
     {
@@ -54,7 +54,7 @@ void displayBoard(GameBoard const* board)
             printf(" %c |", cell);
         }
         printf("\n");
-        
+
         for (j = 0; j < horizontalDividerWidth; ++j)
         {
             printf("-");
@@ -72,7 +72,7 @@ void runGame(Settings const* settings)
     int oWon = 0;
     unsigned long placed = 0;
     unsigned long const cells = board->rows * board->columns;
-    
+
     while (placed < cells && !xWon && !oWon)
     {
         playerTurnX(&board);
@@ -87,7 +87,7 @@ void runGame(Settings const* settings)
             oWon = hasOWon(&board);
         }
     }
-    
+
     printf("Game complete.\n");
     if (xWon)
     {
@@ -121,7 +121,7 @@ void saveLog(GameLog const* log);
 
 
 
-/* PUBLIC FUNCTIONS */
+/* PUBLIC INTERFACE */
 
 
 void mainMenu();
