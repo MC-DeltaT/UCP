@@ -17,7 +17,7 @@ void validateArgs(int argc, char* argv[], int* error)
 int main(int argc, char* argv[])
 {
     int error = 0;
-    Settings settings;
+    Settings settings = zeroedSettings();
 
     validateArgs(argc, argv, &error);
 

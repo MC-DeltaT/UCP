@@ -17,7 +17,7 @@ static int hasWonRow(GameBoard const* board, unsigned row,
 {
     unsigned consecutive = 0;
     unsigned j = 0;
-    
+
     while(j < board->columns && consecutive < board->winRequirement)
     {
         if (getCell(board, row, j) == status)
@@ -28,10 +28,10 @@ static int hasWonRow(GameBoard const* board, unsigned row,
         {
             consecutive = 0;
         }
-        
+
         ++j;
     }
-    
+
     return consecutive >= board->winRequirement;
 }
 
@@ -43,7 +43,7 @@ static int hasWonColumn(GameBoard const* board, unsigned column,
 {
     unsigned consecutive = 0;
     unsigned i = 0;
-    
+
     while(i < board->rows && consecutive < board->winRequirement)
     {
         if (getCell(board, i, column) == status)
@@ -54,7 +54,7 @@ static int hasWonColumn(GameBoard const* board, unsigned column,
         {
             consecutive = 0;
         }
-        
+
         ++i;
     }
 
@@ -96,12 +96,12 @@ static int hasWonFallingDiagonal(GameBoard const* board, unsigned diagonal,
     unsigned consecutive = 0;
     unsigned i;
     unsigned j;
-    
+
     assert(diagonal + 1u < board->rows + board->columns);
     i = board->rows - diagonal - 1u;
-    
+
     /* TODO */
-    
+
     return consecutive >= board->winRequirement;
 }
 
@@ -113,7 +113,7 @@ static int hasWon(GameBoard const* board, CellStatus status)
 {
     unsigned i = 0;
     int win = 0;
-    
+
 
     /* Check for a win across a row. */
     i = 0;
@@ -122,7 +122,7 @@ static int hasWon(GameBoard const* board, CellStatus status)
         win = hasWonRow(board, i, status);
         ++i;
     }
-    
+
     /* Check for a win across a column. */
     i = 0;
     while (i < board->columns && !win)
@@ -130,21 +130,21 @@ static int hasWon(GameBoard const* board, CellStatus status)
         win = hasWonColumn(board, i, status);
         ++i;
     }
-    
+
     /* Check for a win across a rising diagonal.*/
     i = 0;
     while (i < board->columns + board->rows - 1u && !win)
     {
         win = hasWonRisingDiagonal(board, i, status);
     }
-    
+
     /* Check for a win across a falling diagonal. */
     i = 0;
     while (i < board->columns + board->rows - 1u && !win)
     {
         win = hasWonFallingDiagonal(board, i, status);
     }
-    
+
     return win;
 }
 
@@ -153,19 +153,31 @@ static int hasWon(GameBoard const* board, CellStatus status)
 /* PUBLIC FUNCTIONS */
 
 
+GameBoard zeroedGameBoard()
+{
+    GameBoard board;
+
+    board.rows = 0;
+    board.columns = 0;
+    board.winRequirement = 0;
+
+    return board;
+}
+
+
 GameBoard createGameBoard(unsigned rows, unsigned columns,
                           unsigned winRequirement)
 {
     GameBoard board;
-    
+
     assert(winRequirement > 0);
     assert(winRequirement <= rows && winRequirement <= columns);
-    
+
     board.cells = malloc(rows * columns * sizeof(CellStatus));
     board.rows = rows;
     board.columns = columns;
     board.winRequirement = winRequirement;
-    
+
     return board;
 }
 
@@ -200,7 +212,7 @@ int inBoardBounds(GameBoard const* board, unsigned row, unsigned column)
 void setCell(GameBoard* board, unsigned row, unsigned column, CellStatus status)
 {
     assert(inBoardBounds(board, row, column));
-    
+
     board->cells[row * board->columns + column] = status;
 }
 
@@ -208,6 +220,6 @@ void setCell(GameBoard* board, unsigned row, unsigned column, CellStatus status)
 CellStatus getCell(GameBoard const* board, unsigned row, unsigned column)
 {
     assert(inBoardBounds(board, row, column));
-    
+
     return board->cells[row * board->columns + column];
 }

@@ -1,4 +1,5 @@
 CC = gcc
+
 CFLAGS = -ansi -pedantic -Wall -Werror
 ifdef DEBUG
 CFLAGS += -g
@@ -10,8 +11,12 @@ ifdef EDITOR_MODE
 CFLAGS += -D EDITOR_MODE
 endif
 
-tictactoe : main.o interface.o log.o settings.o
-	$(CC) $(CFLAGS) main.o interface.o -o tictactoe
+EXEC = tictactoe
+ALL_OBJ = main.o board.o interface.o log.o settings.o
+
+
+$(EXEC) : $(ALL_OBJ)
+	$(CC) $(CFLAGS) $(ALL_OBJ) -o $(EXEC)
 
 main.o : main.c interface.h settings.h
 	$(CC) $(CFLAGS) -c main.c -o main.o
@@ -21,4 +26,4 @@ board.o : board.h board.c
 
 .PHONY: clean
 clean :
-	rm -f tictactoe board.o interface.o log.o main.o settings.o
+	rm -f $(EXEC) $(ALL_OBJ)
