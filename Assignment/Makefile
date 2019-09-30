@@ -12,7 +12,7 @@ CFLAGS += -D EDITOR_MODE
 endif
 
 EXEC = tictactoe
-ALL_OBJ = main.o board.o interface.o log.o settings.o
+ALL_OBJ = main.o board.o interface.o linked_list.o log.o settings.o
 
 
 $(EXEC) : $(ALL_OBJ)
@@ -26,6 +26,9 @@ board.o : board.c board.h
 
 common.o : common.c common.h
 	$(CC) $(CFLAGS) -c common.c -o common.o
+
+linked_list.o : linked_list.c linked_list.h
+	$(CC) $(CFLAGS) -c linked_list.c -o linked_list.o
 
 settings.o : settings.c settings.h common.h
 	$(CC) $(CFLAGS) -c settings.c -o settings.o
