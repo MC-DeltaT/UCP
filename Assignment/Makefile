@@ -30,6 +30,9 @@ common.o : common.c common.h
 linked_list.o : linked_list.c linked_list.h
 	$(CC) $(CFLAGS) -c linked_list.c -o linked_list.o
 
+log.o : log.c log.h linked_list.h
+	$(CC) $(CFLAGS) -c log.c -o log.o
+
 settings.o : settings.c settings.h common.h
 	$(CC) $(CFLAGS) -c settings.c -o settings.o
 

@@ -9,7 +9,7 @@
 
 /* Frees a linked list node and sets it to NULL.
  * Returns the node's data (i.e does NOT free the data). */
-void* freeNode(LinkedListNode** node)
+static void* freeNode(LinkedListNode** node)
 {
     void* data = (*node)->data;
 
@@ -39,7 +39,7 @@ LinkedList createLinkedList(void)
 }
 
 
-void insertFirst(LinkedList* list, void* data)
+void listInsertFirst(LinkedList* list, void* data)
 {
     LinkedListNode* newNode = (LinkedListNode*)malloc(sizeof(LinkedListNode));
     newNode->data = data;
@@ -62,7 +62,7 @@ void insertFirst(LinkedList* list, void* data)
 }
 
 
-void insertLast(LinkedList* list, void* data)
+void listInsertLast(LinkedList* list, void* data)
 {
     LinkedListNode* newNode = (LinkedListNode*)malloc(sizeof(LinkedListNode));
     newNode->data = data;
@@ -85,7 +85,7 @@ void insertLast(LinkedList* list, void* data)
 }
 
 
-void* removeFirst(LinkedList* list)
+void* listRemoveFirst(LinkedList* list)
 {
     void* data = NULL;
     LinkedListNode* oldHead = list->head;
@@ -112,7 +112,7 @@ void* removeFirst(LinkedList* list)
 }
 
 
-void* removeLast(LinkedList* list)
+void* listRemoveLast(LinkedList* list)
 {
     void* data = NULL;
     LinkedListNode* oldTail = list->tail;
@@ -139,7 +139,25 @@ void* removeLast(LinkedList* list)
 }
 
 
-void removeAll(LinkedList* list)
+void listRemoveAll(LinkedList* list)
+{
+    LinkedListNode* node = list->head;
+    LinkedListNode* next;
+
+    while (node)
+    {
+        next = node->next;
+        freeNode(&node);
+        node = next;
+    }
+
+    list->head = NULL;
+    list->tail = NULL;
+    list->size = 0;
+}
+
+
+void listFreeAndRemoveAll(LinkedList* list)
 {
     LinkedListNode* node = list->head;
     LinkedListNode* next;
@@ -157,27 +175,27 @@ void removeAll(LinkedList* list)
 }
 
 
-void iterateForward(LinkedList* list, void (*callback)(void*, void*),
-    void* callbackData)
+void listIterateForward(LinkedList const* list,
+    void (*callback)(void** nodeData, void* callbackData), void* callbackData)
 {
     LinkedListNode* node = list->head;
 
     while (node)
     {
-        callback(node->data, callbackData);
+        callback(&node->data, callbackData);
         node = node->next;
     }
 }
 
 
-void iterateReverse(LinkedList* list, void (*callback)(void*, void*),
-    void* callbackData)
+void listIterateReverse(LinkedList const* list,
+    void (*callback)(void** nodeData, void* callbackData), void* callbackData)
 {
     LinkedListNode* node = list->tail;
 
     while (node)
     {
-        callback(node->data, callbackData);
+        callback(&node->data, callbackData);
         node = node->prev;
     }
 }

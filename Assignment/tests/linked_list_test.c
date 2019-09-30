@@ -55,15 +55,25 @@ static void createLinkedListTest(void)
 }
 
 
-/* Tests insertFirst(). */
-static void insertFirstTest(void)
+/* Tests EMPTY_LINKED_LIST. */
+static void emptyLinkedListTest(void)
+{
+    LinkedList list = EMPTY_LINKED_LIST;
+    assert(list.head == NULL);
+    assert(list.tail == NULL);
+    assert(list.size == 0);
+}
+
+
+/* Tests listInsertFirst(). */
+static void listInsertFirstTest(void)
 {
     unsigned long i = 0;
     LinkedList list = createLinkedList();
 
     for (i = 0; i < TEST_SIZE; ++i)
     {
-        insertFirst(&list, testData(i));
+        listInsertFirst(&list, testData(i));
         assert(list.head != NULL);
         assert(list.tail != NULL);
         assert(list.size == i + 1ul);
@@ -72,19 +82,19 @@ static void insertFirstTest(void)
         assertHasData(i, list.head);
     }
 
-    removeAll(&list);
+    listFreeAndRemoveAll(&list);
 }
 
 
-/* Tests insertLast(). */
-static void insertLastTest(void)
+/* Tests listInsertLast(). */
+static void listInsertLastTest(void)
 {
     unsigned long i = 0;
     LinkedList list = createLinkedList();
 
     for (i = 0; i < TEST_SIZE; ++i)
     {
-        insertLast(&list, testData(i));
+        listInsertLast(&list, testData(i));
         assert(list.head != NULL);
         assert(list.tail != NULL);
         assert(list.size == i + 1ul);
@@ -93,12 +103,12 @@ static void insertLastTest(void)
         assertHasData(i, list.tail);
     }
 
-    removeAll(&list);
+    listFreeAndRemoveAll(&list);
 }
 
 
-/* Tests removeFirst(). */
-static void removeFirstTest(void)
+/* Tests listRemoveFirst(). */
+static void listRemoveFirstTest(void)
 {
     unsigned long i = 0;
     LinkedList list = createLinkedList();
@@ -106,12 +116,12 @@ static void removeFirstTest(void)
 
     for (i = 0; i < TEST_SIZE; ++i)
     {
-        insertLast(&list, testData(i));
+        listInsertLast(&list, testData(i));
     }
 
     for (i = 0; i < TEST_SIZE; ++i)
     {
-        data = removeFirst(&list);
+        data = listRemoveFirst(&list);
         assert(list.size == TEST_SIZE - 1ul - i);
         assertData(i, data);
         free(data);
@@ -122,8 +132,8 @@ static void removeFirstTest(void)
 }
 
 
-/* Tests removeLast(). */
-static void removeLastTest(void)
+/* Tests listRemoveLast(). */
+static void listRemoveLastTest(void)
 {
     unsigned long i = 0;
     LinkedList list = createLinkedList();
@@ -131,12 +141,12 @@ static void removeLastTest(void)
 
     for (i = 0; i < TEST_SIZE; ++i)
     {
-        insertFirst(&list, testData(i));
+        listInsertFirst(&list, testData(i));
     }
 
     for (i = 0; i < TEST_SIZE; ++i)
     {
-        data = removeLast(&list);
+        data = listRemoveLast(&list);
         assert(list.size == TEST_SIZE - 1ul - i);
         assertData(i, data);
         free(data);
@@ -147,73 +157,98 @@ static void removeLastTest(void)
 }
 
 
-/* Tests removeAll(). */
-static void removeAllTest(void)
+/* Tests listRemoveAll(). */
+static void listRemoveAllTest(void)
+{
+    unsigned long i = 0;
+    LinkedList list = createLinkedList();
+    unsigned long* data = (unsigned long*)malloc(
+                            TEST_SIZE * sizeof(unsigned long));
+
+    for (i = 0; i < TEST_SIZE; ++i)
+    {
+        listInsertFirst(&list, data + i);
+    }
+
+    listRemoveAll(&list);
+    assert(list.head == NULL);
+    assert(list.tail == NULL);
+    assert(list.size == 0);
+
+    free(data);
+    data = NULL;
+}
+
+
+/* Tests listFreeAndRemoveAll(). */
+static void listFreeAndRemoveAllTest(void)
 {
     unsigned long i = 0;
     LinkedList list = createLinkedList();
 
     for (i = 0; i < TEST_SIZE; ++i)
     {
-        insertFirst(&list, testData(i));
+        listInsertFirst(&list, testData(i));
     }
 
-    removeAll(&list);
+    listFreeAndRemoveAll(&list);
     assert(list.head == NULL);
     assert(list.tail == NULL);
     assert(list.size == 0);
 }
 
 
-/* Helper for iterateForwardTest(), used by iterateForward() to visit nodes. */
-static void iterateForwardCallback(void* data, void* expected)
+/* Helper for listIterateForwardTest(), used by listIterateForward() to visit
+   nodes. */
+static void iterateForwardCallback(void** data, void* expected)
 {
-    assertData(VTOUL(expected), data);
+    assertData(VTOUL(expected), *data);
     ++VTOUL(expected);
 }
 
 
-/* Tests iterateForward(). */
-static void iterateForwardTest(void)
+/* Tests listIterateForward(). */
+static void listIterateForwardTest(void)
 {
     unsigned long i = 0;
     LinkedList list = createLinkedList();
 
     for (i = 0; i < TEST_SIZE; ++i)
     {
-        insertLast(&list, testData(i));
+        listInsertLast(&list, testData(i));
     }
 
     i = 0;
-    iterateForward(&list, iterateForwardCallback, (void*)&i);
+    listIterateForward(&list, iterateForwardCallback, &i);
 
-    removeAll(&list);
+    listFreeAndRemoveAll(&list);
 }
 
 
-/* Helper for iterateReverseTest(), used by iterateReverse() to visit nodes. */
-static void iterateReverseCallback(void* data, void* expected)
+/* Helper for listIterateReverseTest(), used by listIterateReverse() to visit
+   nodes. */
+static void iterateReverseCallback(void** data, void* expected)
 {
-    assertData(VTOUL(expected), data);
+    assertData(VTOUL(expected), *data);
     ++VTOUL(expected);
 }
 
 
-/* Tests iterateReverse(). */
-static void iterateReverseTest(void)
+/* Tests listIterateReverse(). */
+static void listIterateReverseTest(void)
 {
     unsigned long i = 0;
     LinkedList list = createLinkedList();
 
     for (i = 0; i < TEST_SIZE; ++i)
     {
-        insertFirst(&list, testData(i));
+        listInsertFirst(&list, testData(i));
     }
 
     i = 0;
-    iterateReverse(&list, iterateReverseCallback, (void*)&i);
+    listIterateReverse(&list, iterateReverseCallback, &i);
 
-    removeAll(&list);
+    listFreeAndRemoveAll(&list);
 }
 
 
@@ -226,11 +261,13 @@ void linkedListTest(void)
     moduleTestHeader("linked list");
 
     runUnitTest("createLinkedList()", createLinkedListTest);
-    runUnitTest("insertFirst()", insertFirstTest);
-    runUnitTest("insertLast()", insertLastTest);
-    runUnitTest("removeFirst()", removeFirstTest);
-    runUnitTest("removeLast()", removeLastTest);
-    runUnitTest("removeAll()", removeAllTest);
-    runUnitTest("iterateForward()", iterateForwardTest);
-    runUnitTest("iterateReverse()", iterateReverseTest);
+    runUnitTest("EMPTY_LINKED_LIST", emptyLinkedListTest);
+    runUnitTest("listInsertFirst()", listInsertFirstTest);
+    runUnitTest("listInsertLast()", listInsertLastTest);
+    runUnitTest("listRemoveFirst()", listRemoveFirstTest);
+    runUnitTest("listRemoveLast()", listRemoveLastTest);
+    runUnitTest("listRemoveAll()", listRemoveAllTest);
+    runUnitTest("listFreeAndRemoveAll()", listFreeAndRemoveAllTest);
+    runUnitTest("listIterateForward()", listIterateForwardTest);
+    runUnitTest("listIterateReverse()", listIterateReverseTest);
 }
