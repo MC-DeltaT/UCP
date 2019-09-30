@@ -36,13 +36,11 @@ static void assertSettingsZero(Settings const* settings)
 }
 
 
+/* Tests zeroedSettings(). */
 static void zeroedSettingsTest(void)
 {
     Settings settings = zeroedSettings();
-
-    assert(settings.boardRows == 0);
-    assert(settings.boardColumns == 0);
-    assert(settings.winRequirement == 0);
+    assertSettingsZero(&settings);
 }
 
 

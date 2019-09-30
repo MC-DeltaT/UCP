@@ -6,11 +6,11 @@
 
 
 /* Represents a cell in the tic-tac-toe board. */
-enum CellStatus {
+typedef enum {
     CELL_EMPTY,         /* empty cell. */
     CELL_X,             /* cell occupied by an "X". */
     CELL_O              /* cell occupied by an "O". */
-};
+} CellStatus;
 
 
 /* Represents the tic-tac-toe board.
@@ -31,12 +31,16 @@ typedef struct {
    known values rather than have them unspecified.*/
 GameBoard zeroedGameBoard(void);
 
-/* Creates a game board from the given parameters. */
+/* Creates a game board from the given parameters.
+   rows, columns and winRequirement must all be >0. */
 GameBoard createGameBoard(unsigned rows, unsigned columns,
                           unsigned winRequirement);
 
 /* Destroys a game board (deallocates resources, etc.). */
 void destroyGameBoard(GameBoard* board);
+
+/* Sets all cells of a board to CELL_EMPTY. */
+void clearCells(GameBoard* board);
 
 /* Checks if Xs has won on the given board. */
 int hasXWon(GameBoard const* board);

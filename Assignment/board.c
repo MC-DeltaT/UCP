@@ -93,16 +93,18 @@ static int hasWonRisingDiagonal(GameBoard const* board, unsigned diagonal,
 static int hasWonFallingDiagonal(GameBoard const* board, unsigned diagonal,
                                 CellStatus status)
 {
-    unsigned consecutive = 0;
+    /*unsigned consecutive = 0;
     unsigned i;
     unsigned j;
 
     assert(diagonal + 1u < board->rows + board->columns);
     i = board->rows - diagonal - 1u;
 
+    return consecutive >= board->winRequirement;*/
+
     /* TODO */
 
-    return consecutive >= board->winRequirement;
+    return 0;
 }
 
 
@@ -170,13 +172,16 @@ GameBoard createGameBoard(unsigned rows, unsigned columns,
 {
     GameBoard board;
 
+    assert(rows > 0);
+    assert(columns > 0);
     assert(winRequirement > 0);
-    assert(winRequirement <= rows && winRequirement <= columns);
 
     board.cells = malloc(rows * columns * sizeof(CellStatus));
     board.rows = rows;
     board.columns = columns;
     board.winRequirement = winRequirement;
+
+    clearCells(&board);
 
     return board;
 }
@@ -186,8 +191,24 @@ void destroyGameBoard(GameBoard* board)
 {
     board->rows = 0;
     board->columns = 0;
-    free(board.cells);
+    board->winRequirement = 0;
+    free(board->cells);
     board->cells = NULL;
+}
+
+
+void clearCells(GameBoard* board)
+{
+    unsigned i = 0;
+    unsigned j = 0;
+
+    for (i = 0; i < board->rows; ++i)
+    {
+        for (j = 0; j < board->columns; ++j)
+        {
+            setCell(board, i, j, CELL_EMPTY);
+        }
+    }
 }
 
 

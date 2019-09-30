@@ -24,11 +24,11 @@ main.o : main.c interface.h settings.h
 board.o : board.c board.h
 	$(CC) $(CFLAGS) -c board.c -o board.o
 
-settings.o : settings.c settings.h common.h
-	$(CC) $(CFLAGS) -c settings.c -o settings.o
-
 common.o : common.c common.h
 	$(CC) $(CFLAGS) -c common.c -o common.o
+
+settings.o : settings.c settings.h common.h
+	$(CC) $(CFLAGS) -c settings.c -o settings.o
 
 .PHONY: clean
 clean :

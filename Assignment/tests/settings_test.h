@@ -1,7 +1,7 @@
 /* Unit tests for the settings module. */
 
-#ifndef TEST_SETTINGS_TEST_H
-#define TEST_SETTINGS_TEST_H
+#ifndef TESTS_SETTINGS_TEST_H
+#define TESTS_SETTINGS_TEST_H
 
 
 /* Runs the tests for the settings module. */
