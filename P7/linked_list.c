@@ -137,6 +137,9 @@ void removeAll(LinkedList* list)
         free(freeNode(&node));
         node = next;
     }
+
+    list->head = NULL;
+    list->tail = NULL;
 }
 
 

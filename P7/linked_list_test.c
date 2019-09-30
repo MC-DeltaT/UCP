@@ -119,6 +119,22 @@ void testRemoveLast(void)
 }
 
 
+void testRemoveAll(void)
+{
+    unsigned long i = 0;
+    LinkedList list = createLinkedList();
+
+    for (i = 0; i < TEST_SIZE; ++i)
+    {
+        insertFirst(&list, testData(i));
+    }
+
+    removeAll(&list);
+    assert(list.head == NULL);
+    assert(list.tail == NULL);
+}
+
+
 void iterateForwardCallback(void* data, void* expected)
 {
     assertData(VTOUL(expected), data);
@@ -174,6 +190,7 @@ int main(void)
     testInsertLast();
     testRemoveFirst();
     testRemoveLast();
+    testRemoveAll();
     testIterateForward();
     testIterateReverse();
 
