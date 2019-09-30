@@ -6,20 +6,22 @@
 
 
 /* Represents a cell in the tic-tac-toe board. */
-typedef enum {
-    CELL_EMPTY,         /* empty cell. */
-    CELL_X,             /* cell occupied by an "X". */
-    CELL_O              /* cell occupied by an "O". */
+typedef enum
+{
+    CELL_EMPTY,         /* Empty cell. */
+    CELL_X,             /* Cell occupied by an "X". */
+    CELL_O              /* Cell occupied by an "O". */
 } CellStatus;
 
 
 /* Represents the tic-tac-toe board.
    Use createGameBoard to properly create the board,
    and destroyGameBoard to properly destroy it. */
-typedef struct {
-    unsigned rows;
-    unsigned columns;
-    unsigned winRequirement;
+typedef struct
+{
+    unsigned rows;                  /* Height of the board ("n" value). */
+    unsigned columns;               /* Width of the board ("m" value). */
+    unsigned winRequirement;        /* Consecutive cells to win ("k" value). */
     /* Cells are stored in row-major format
         (i.e. consecutive cells in a row are consecutive in the array). */
     CellStatus* cells;

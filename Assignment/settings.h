@@ -5,10 +5,11 @@
 
 
 /* Stores the program/game settings. */
-typedef struct {
-    unsigned boardRows;
-    unsigned boardColumns;
-    unsigned winRequirement;
+typedef struct
+{
+    unsigned boardRows;         /* Height of the board ("n" value). */
+    unsigned boardColumns;      /* Width of the board ("m" value). */
+    unsigned winRequirement;    /* Consecutive cells to win ("k" value). */
 } Settings;
 
 

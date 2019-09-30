@@ -4,11 +4,13 @@
 #include <stddef.h>
 
 
-/* Node for LinkedList, below. */
-typedef struct LinkedListNode {
-    struct LinkedListNode* prev;
-    struct LinkedListNode* next;
-    void* data;
+/* Node for LinkedList, below.
+   Instances of this shouldn't have to be created outside this module. */
+typedef struct LinkedListNode
+{
+    struct LinkedListNode* prev;        /* Previous node in the list. */
+    struct LinkedListNode* next;        /* Next node in the list. */
+    void* data;                         /* Arbitrary data stored in node. */
 } LinkedListNode;
 
 
@@ -16,10 +18,11 @@ typedef struct LinkedListNode {
    Use createLinkedList() to create an empty linked list.
    To "free" the linked list, just remove all the nodes using removeFirst(),
    removeLast(), or removeAll(). */
-typedef struct {
-    LinkedListNode* head;
-    LinkedListNode* tail;
-    size_t size;
+typedef struct
+{
+    LinkedListNode* head;       /* First node in the list. */
+    LinkedListNode* tail;       /* Last node in the list. */
+    size_t size;                /* Number of nodes in the list. */
 } LinkedList;
 
 

@@ -23,10 +23,11 @@
 
 
 /* Contains data needed for parsing an option from a settings file. */
-typedef struct {
-    char option;        /* character used in file to indicate option. */
-    unsigned value;     /* value of option. */
-    int beenRead;       /* indicates if this option has been read yet. Does NOT
+typedef struct
+{
+    char option;        /* Character used in file to indicate option. */
+    unsigned value;     /* Value of option. */
+    int beenRead;       /* Indicates if this option has been read yet. Does NOT
                            mean the option specification had to be valid. */
 } OptionData;
 
