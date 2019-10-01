@@ -3,6 +3,8 @@
 #ifndef LOG_H
 #define LOG_H
 
+#include "common.h"
+
 #include <stdio.h>
 
 
@@ -10,14 +12,6 @@
     All the game logs are stored internally in this module, i.e. the module is
     stateful. Functions give purposely limited access to them. This is in order
     to simplify the logging process. */
-
-
-/* Identifies game players. */
-typedef enum
-{
-    PLAYER_X,
-    PLAYER_O
-} Player;
 
 
 /* Creates a new, empty game log and sets it as the current game log. */

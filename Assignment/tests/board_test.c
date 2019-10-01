@@ -6,6 +6,7 @@
 #include "common.h"
 
 #include <assert.h>
+#include <stdio.h>
 #include <stdlib.h>
 
 
@@ -224,6 +225,49 @@ static void clearCellsTest(void)
 }
 
 
+/* Tests displayGameBoard(). */
+static void displayGameBoardTest(void)
+{
+    GameBoard board = zeroedGameBoard();
+
+    printf("1x1 board:\n");
+    board = createGameBoard(1, 1, 1);
+    setCell(&board, 0, 0, CELL_X);
+    displayGameBoard(&board);
+    printf("\n");
+
+    printf("1x2 board:\n");
+    board = createGameBoard(1, 2, 2);
+    setCell(&board, 0, 1, CELL_O);
+    displayGameBoard(&board);
+    printf("\n");
+
+    printf("2x1 board:\n");
+    board = createGameBoard(2, 1, 2);
+    setCell(&board, 1, 0, CELL_O);
+    setCell(&board, 0, 0, CELL_X);
+    displayGameBoard(&board);
+    printf("\n");
+
+    printf("2x2 board:\n");
+    board = createGameBoard(2, 2, 2);
+    setCell(&board, 0, 0, CELL_O);
+    setCell(&board, 1, 0, CELL_X);
+    displayGameBoard(&board);
+    printf("\n");
+
+    printf("Large board:\n");
+    board = createGameBoard(5, 7, 3);
+    setCell(&board, 0, 0, CELL_O);
+    setCell(&board, 1, 0, CELL_X);
+    setCell(&board, 1, 1, CELL_X);
+    setCell(&board, 3, 6, CELL_X);
+    setCell(&board, 4, 6, CELL_O);
+    displayGameBoard(&board);
+    printf("\n");
+}
+
+
 
 /* PUBLIC INTERFACE */
 
@@ -238,4 +282,5 @@ void boardTest(void)
     runUnitTest("inBoard bounds()", inBoardBoundsTest);
     runUnitTest("setCell() and getCell()", setGetCellTest);
     runUnitTest("clearCells()", clearCellsTest);
+    runUnitTest("displayGameBoard()", displayGameBoardTest);
 }

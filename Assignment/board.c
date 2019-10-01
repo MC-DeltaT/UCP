@@ -4,6 +4,7 @@
 
 #include <assert.h>
 #include <stddef.h>
+#include <stdio.h>
 #include <stdlib.h>
 
 
@@ -243,4 +244,70 @@ CellStatus getCell(GameBoard const* board, unsigned row, unsigned column)
     assert(inBoardBounds(board, row, column));
 
     return board->cells[row * board->columns + column];
+}
+
+
+void displayGameBoard(GameBoard const* board)
+{
+    static char const X_CHAR = 'X';
+    static char const O_CHAR = 'O';
+    static char const EMPTY_CHAR = ' ';
+
+    unsigned const horizontalDividerWidth = board->columns * 4 + 1;
+    unsigned i = 0;
+    unsigned j = 0;
+    char cell;
+
+    /* Top border. */
+    for (i = 0; i < horizontalDividerWidth; ++i)
+    {
+        printf("-");
+    }
+    printf("\n");
+
+    /* Board body. */
+    for (i = 0; i < board->rows; ++i)
+    {
+        printf("|");
+        for (j = 0; j < board->columns; ++j)
+        {
+            switch (getCell(board, i, j))
+            {
+                case CELL_X:
+                    cell = X_CHAR;
+                    break;
+                case CELL_O:
+                    cell = O_CHAR;
+                    break;
+                case CELL_EMPTY:
+                    cell = EMPTY_CHAR;
+                    break;
+                default:
+                    assert(0);
+            }
+            printf(" %c |", cell);
+        }
+        printf("\n");
+
+        for (j = 0; j < horizontalDividerWidth; ++j)
+        {
+            printf("-");
+        }
+        printf("\n");
+    }
+}
+
+
+CellStatus playerToCell(Player player)
+{
+    CellStatus status;
+
+    switch(player)
+    {
+        case PLAYER_X: status = CELL_X; break;
+        case PLAYER_O: status = CELL_O; break;
+        default: assert(0);
+    }
+
+    return status;
 }

@@ -29,7 +29,6 @@ void unitTestHeader(char const* unitName)
 {
     printf("%s unit test\n", unitName);
     printf("---------------------------\n");
-    printf("\n");
 }
 
 

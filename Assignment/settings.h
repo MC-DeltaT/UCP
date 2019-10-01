@@ -3,6 +3,8 @@
 #ifndef SETTINGS_H
 #define SETTINGS_H
 
+#include <stdio.h>
+
 
 /* Stores the program/game settings. */
 typedef struct
@@ -30,6 +32,9 @@ Settings readSettings(char const* filePath, int* error);
    If all settings are not invalid, returns 1.
    */
 int validateSettings(Settings const* settings);
+
+/* Writes the given settings in textual form to the given stream. */
+void writeSettings(FILE* stream, Settings const* settings);
 
 
 #endif

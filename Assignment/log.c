@@ -2,6 +2,7 @@
 
 #include "log.h"
 
+#include "common.h"
 #include "linked_list.h"
 
 #include <assert.h>
@@ -77,22 +78,6 @@ static void logTurnTo(GameLog* gameLog, Player player, unsigned row,
 }
 
 
-/* Returns 'X' for PLAYER_X, 'O' for PLAYER_O. */
-static char playerToChar(Player player)
-{
-    char res = '\0';
-
-    switch (player)
-    {
-        case PLAYER_X: res = 'X'; break;
-        case PLAYER_O: res = 'O'; break;
-        default: assert(0);
-    }
-
-    return res;
-}
-
-
 /* Returns a pointer to the LinkedList of GameLog instances used to store the
    game logs.*/
 static LinkedList* getGameLogs(void)
@@ -103,7 +88,7 @@ static LinkedList* getGameLogs(void)
 
 
 /* List iteration callback for freeGameLogs() to destroy a game log. */
-static void freeGameLogCallback(void** data, void* callbackData)
+static void freeGameLogCallback(void** data, void* _)
 {
     GameLog* gameLog = *data;
     *data = NULL;
@@ -117,9 +102,9 @@ static void writePlayerTurnCallback(void** data, void* stream)
 {
     PlayerTurn const* turn = *data;
 
-    fprintf(stream, "  Turn %lu:\n", turn->turnNum);
-    fprintf(stream, "    Player: %c\n", playerToChar(turn->player));
-    fprintf(stream, "    Location: %u, %u\n", turn->column, turn->row);
+    fprintf(stream, "   Turn %lu:\n", turn->turnNum);
+    fprintf(stream, "   Player: %c\n", playerToChar(turn->player));
+    fprintf(stream, "   Location: %u,%u\n", turn->column, turn->row);
     fprintf(stream, "\n");
 }
 

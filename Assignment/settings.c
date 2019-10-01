@@ -97,9 +97,9 @@ static void readSettingsLine(FILE* file, OptionData options[],
         /* Whole line was read. */
         if (strchr(line, '\n'))
         {
-            /* Note: can't use %u format specifier, because that, for some
-               ungodly reason, actually accepts negative values, and then wraps
-               them around to large positive values. */
+            /* Can't use %u format specifier, because that, for some ungodly
+               reason, actually accepts negative values, and then wraps them
+               around to large positive values. */
             if (2 == sscanf(line, "%c=%ld", &optionChar, &optionVal))
             {
                 setOption(options, optionCount, optionChar, optionVal,
@@ -189,6 +189,9 @@ Settings readSettings(char const* filePath, int* error)
             }
         }
 
+        fclose(file);
+        file = NULL;
+
         if (!*error)
         {
             settings.boardRows = options[0].value;
@@ -216,21 +219,21 @@ int validateSettings(Settings const* settings)
 
     if (boardRows == 0)
     {
-        fprintf(stderr, "Error in settings: %c must be >0.\n",
+        fprintf(stderr, "Invalid settings: %c must be >0.\n",
             BOARD_ROWS_OPTION);
         result = 0;
     }
 
     if (boardColumns == 0)
     {
-        fprintf(stderr, "Error in settings: %c must be >0.\n",
+        fprintf(stderr, "Invalid settings: %c must be >0.\n",
             BOARD_COLUMNS_OPTION);
         result = 0;
     }
 
     if (winRequirement == 0)
     {
-        fprintf(stderr, "Error in settings: %c must be >0.\n", WIN_REQ_OPTION);
+        fprintf(stderr, "Invalid settings: %c must be >0.\n", WIN_REQ_OPTION);
         result = 0;
     }
 
@@ -242,4 +245,13 @@ int validateSettings(Settings const* settings)
     }
 
     return result;
+}
+
+
+void writeSettings(FILE* stream, Settings const* settings)
+{
+    fprintf(stream, "SETTINGS:\n");
+    fprintf(stream, "   M: %u\n", settings->boardColumns);
+    fprintf(stream, "   N: %u\n", settings->boardRows);
+    fprintf(stream, "   K: %u\n", settings->winRequirement);
 }

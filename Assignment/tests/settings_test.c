@@ -210,6 +210,17 @@ static void validateSettingsTest(void)
 }
 
 
+/* Tests writeSettings(). */
+static void writeSettingsTest(void)
+{
+    Settings settings = zeroedSettings();
+    settings.boardRows = 10;
+    settings.boardColumns = 1;
+    settings.winRequirement = 5;
+    writeSettings(stdout, &settings);
+}
+
+
 
 /* PUBLIC INTERFACE */
 
@@ -221,4 +232,5 @@ void settingsTest(void)
     runUnitTest("zeroedSettings()", zeroedSettingsTest);
     runUnitTest("readSettings()", readSettingsTest);
     runUnitTest("validateSettings()", validateSettingsTest);
+    runUnitTest("writeSettings()", writeSettingsTest);
 }

@@ -2,27 +2,25 @@
 
 #include "common.h"
 
+#include <assert.h>
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 
 
 /* PUBLIC INTERFACE */
 
 
-char* concatString(char const* str1, char const* str2)
+char playerToChar(Player player)
 {
-    char* result = NULL;
-    size_t len1 = strlen(str1);
-    size_t len2 = strlen(str2);
-    size_t resLen = len1 + len2 + 1ul;
+    char res = '\0';
 
-    result = (char*)malloc(resLen);
+    switch (player)
+    {
+        case PLAYER_X: res = 'X'; break;
+        case PLAYER_O: res = 'O'; break;
+        default: assert(0);
+    }
 
-    memcpy(result, str1, len1);
-    memcpy(result + len1, str2, len2 + 1ul);
-
-    return result;
+    return res;
 }
 
 

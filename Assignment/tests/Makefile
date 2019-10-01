@@ -18,13 +18,13 @@ main.o : main.c board_test.h linked_list_test.h settings_test.h
 common.o : common.c common.h
 	$(CC) -c common.c -o common.o
 
-board_test.o : board_test.c board_test.h common.h ../board.h
+board_test.o : board_test.c board_test.h common.h ../board.h ../common.h
 	$(CC) -c board_test.c -o board_test.o
 
 linked_list_test.o : linked_list_test.c linked_list_test.h common.h ../linked_list.h
 	$(CC) -c linked_list_test.c -o linked_list_test.o
 
-log_test.o : log_test.c log_test.h common.h ../log.h
+log_test.o : log_test.c log_test.h common.h ../log.h ../common.h
 	$(CC) -c log_test.c -o log_test.o
 
 settings_test.o : settings_test.c settings_test.h common.h ../settings.h

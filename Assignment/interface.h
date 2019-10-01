@@ -8,7 +8,7 @@ struct Settings;
 
 
 /* Main menu of the program. Handles pretty much everything. */
-void mainMenu(Settings const* settings);
+void mainMenu(struct Settings* settings);
 
 
 #endif

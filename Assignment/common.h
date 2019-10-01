@@ -6,9 +6,17 @@
 #include <stdio.h>
 
 
-/* Concatenates two strings and returns the result as a new string.
-   The returned buffer must be freed. */
-char* concatString(char const* str1, char const* str2);
+/* Identifies game players. */
+typedef enum
+{
+    PLAYER_X,
+    PLAYER_O
+} Player;
+
+
+/* Returns 'X' for PLAYER_X, 'O' for PLAYER_O. */
+char playerToChar(Player player);
+
 
 /* Reads characters from a file until a given character is encountered.
    consume controls whether or not that character is consumed from the file.

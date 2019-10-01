@@ -5,6 +5,9 @@
 #define BOARD_H
 
 
+#include "common.h"
+
+
 /* Represents a cell in the tic-tac-toe board. */
 typedef enum
 {
@@ -61,6 +64,12 @@ void setCell(GameBoard* board, unsigned row, unsigned column,
 /* Gets the status of a board cell.
    row and column must be within the bounds of the board. */
 CellStatus getCell(GameBoard const* board, unsigned row, unsigned column);
+
+/* Prints a game board to stdout. */
+void displayGameBoard(GameBoard const* board);
+
+/* Returns CELL_X for PLAYER_X and CELL_O for PLAYER_O. */
+CellStatus playerToCell(Player player);
 
 
 #endif
