@@ -3,12 +3,11 @@
 #ifndef INTERFACE_H
 #define INTERFACE_H
 
-
-struct Settings;
+#include "settings.h"
 
 
 /* Main menu of the program. Handles pretty much everything. */
-void mainMenu(struct Settings* settings);
+void mainMenu(Settings* settings);
 
 
 #endif

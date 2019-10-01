@@ -15,7 +15,7 @@ endif
 CC = $(COMPILER) $(CFLAGS)
 
 EXEC = tictactoe
-ALL_OBJ = main.o board.o common.o linked_list.o log.o settings.o
+ALL_OBJ = main.o board.o common.o interface.o linked_list.o log.o settings.o
 
 
 $(EXEC) : $(ALL_OBJ)
@@ -29,6 +29,9 @@ board.o : board.c board.h common.h
 
 common.o : common.c common.h
 	$(CC) -c common.c -o common.o
+
+interface.o : interface.c interface.h board.h common.h log.h settings.h
+	$(CC) -c interface.c -o interface.o
 
 linked_list.o : linked_list.c linked_list.h
 	$(CC) -c linked_list.c -o linked_list.o

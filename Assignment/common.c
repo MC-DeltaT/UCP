@@ -3,6 +3,7 @@
 #include "common.h"
 
 #include <assert.h>
+#include <ctype.h>
 #include <stdio.h>
 
 
@@ -38,4 +39,19 @@ int readUntil(FILE* file, char c, int consume)
     }
 
     return read != EOF;
+}
+
+
+int isWhitespace(char const* str)
+{
+    int res = 1;
+    char const* c = str;
+
+    while (res && *c)
+    {
+        res = isspace(*c);
+        ++c;
+    }
+
+    return res;
 }

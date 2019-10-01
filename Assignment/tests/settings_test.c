@@ -9,19 +9,24 @@
 #include <stdio.h>
 
 
-#define NONEXISTENT_FILE "settings_data/nonexistent_file.txt"
-#define EMPTY_FILE "settings_data/empty.txt"
-#define INVALID_FORMAT "settings_data/invalid_format.txt"
-#define INVALID_OPTION "settings_data/invalid_option.txt"
-#define INVALID_OPTIONS "settings_data/invalid_options.txt"
-#define MISSING_OPTION "settings_data/missing_option.txt"
-#define MISSING_OPTIONS "settings_data/missing_options.txt"
-#define DUPLICATE_OPTION "settings_data/duplicate_option.txt"
-#define DUPLICATE_OPTIONS "settings_data/duplicate_options.txt"
-#define INVALID_OPTION_AND_MISSING "settings_data/invalid_option_missing.txt"
-#define INVALID_FORMAT_AND_MISSING "settings_data/invalid_format_missing.txt"
-#define DUPLICATE_INVALID_FORMAT "settings_data/duplicate_invalid_format.txt"
-#define VALID "settings_data/valid.txt"
+#define NONEXISTENT_FILE "test_settings/nonexistent_file.txt"
+#define EMPTY_FILE "test_settings/empty.txt"
+#define INVALID_FORMAT "test_settings/invalid_format.txt"
+#define INVALID_OPTION "test_settings/invalid_option.txt"
+#define INVALID_OPTIONS "test_settings/invalid_options.txt"
+#define MISSING_OPTION "test_settings/missing_option.txt"
+#define MISSING_OPTIONS "test_settings/missing_options.txt"
+#define DUPLICATE_OPTION "test_settings/duplicate_option.txt"
+#define DUPLICATE_OPTIONS "test_settings/duplicate_options.txt"
+#define INVALID_OPTION_AND_MISSING "test_settings/invalid_option_missing.txt"
+#define INVALID_FORMAT_AND_MISSING "test_settings/invalid_format_missing.txt"
+#define DUPLICATE_INVALID_FORMAT "test_settings/duplicate_invalid_format.txt"
+#define LINE_TOO_LONG "test_settings/line_too_long.txt"
+#define LAST_LINE_TOO_LONG "test_settings/last_line_too_long.txt"
+#define TRAILING_RUBBISH "test_settings/trailing_rubbish.txt"
+#define VALID "test_settings/valid.txt"
+#define VALID_NO_NEWLINE "test_settings/valid_no_newline.txt"
+#define VALID_EXTRA_SPACE "test_settings/valid_extra_space.txt"
 
 
 /* PRIVATE INTERFACE */
@@ -30,9 +35,9 @@
 /* Asserts that all members of a Settings instance are zeroed out. */
 static void assertSettingsZero(Settings const* settings)
 {
-    assert(settings->boardRows == 0);
-    assert(settings->boardColumns == 0);
-    assert(settings->winRequirement == 0);
+    assert(settings->n == 0);
+    assert(settings->m == 0);
+    assert(settings->k == 0);
 }
 
 
@@ -135,13 +140,52 @@ static void readSettingsTest(void)
     assertSettingsZero(&settings);
     printf("\n");
 
+    printf("Line too long test:\n");
+    error = 0;
+    settings = readSettings(LINE_TOO_LONG, &error);
+    assert(error);
+    assertSettingsZero(&settings);
+    printf("\n");
+
+    printf("Last line too long test:\n");
+    error = 0;
+    settings = readSettings(LAST_LINE_TOO_LONG, &error);
+    assert(error);
+    assertSettingsZero(&settings);
+    printf("\n");
+
+    printf("Valid but trailing rubbish each line test:\n");
+    error = 0;
+    settings = readSettings(TRAILING_RUBBISH, &error);
+    assert(error);
+    assertSettingsZero(&settings);
+    printf("\n");
+
     printf("Valid file test:\n");
     error = 0;
     settings = readSettings(VALID, &error);
     assert(!error);
-    assert(settings.boardRows == 10);
-    assert(settings.boardColumns == 45);
-    assert(settings.winRequirement == 6);
+    assert(settings.n == 10);
+    assert(settings.m == 45);
+    assert(settings.k == 6);
+    printf("\n");
+
+    printf("Valid file without final newline test:\n");
+    error = 0;
+    settings = readSettings(VALID_NO_NEWLINE, &error);
+    assert(!error);
+    assert(settings.n == 10);
+    assert(settings.m == 45);
+    assert(settings.k == 6);
+    printf("\n");
+
+    printf("Valid file with extra space test:\n");
+    error = 0;
+    settings = readSettings(VALID_EXTRA_SPACE, &error);
+    assert(!error);
+    assert(settings.n == 11);
+    assert(settings.m == 10);
+    assert(settings.k == 7);
     printf("\n");
 }
 
@@ -152,58 +196,58 @@ static void validateSettingsTest(void)
     int result = 0;
     Settings settings = zeroedSettings();
 
-    printf("Invalid board rows:\n");
-    settings.boardRows = 0;
-    settings.boardColumns = 5;
-    settings.winRequirement = 5;
+    printf("Invalid N:\n");
+    settings.n = 0;
+    settings.m = 5;
+    settings.k = 5;
     result = validateSettings(&settings);
     assert(!result);
     printf("\n");
 
-    printf("Invalid board columns:\n");
-    settings.boardRows = 5;
-    settings.boardColumns = 0;
-    settings.winRequirement = 5;
+    printf("Invalid M:\n");
+    settings.n = 5;
+    settings.m = 0;
+    settings.k = 5;
     result = validateSettings(&settings);
     assert(!result);
     printf("\n");
 
-    printf("Invalid win requirement:\n");
-    settings.boardRows = 5;
-    settings.boardColumns = 5;
-    settings.winRequirement = 0;
+    printf("Invalid K:\n");
+    settings.n = 5;
+    settings.m = 5;
+    settings.k = 0;
     result = validateSettings(&settings);
     assert(!result);
     printf("\n");
 
-    printf("Invalid rows, columns, and win requirement:\n");
-    settings.boardRows = 0;
-    settings.boardColumns = 0;
-    settings.winRequirement = 0;
+    printf("Invalid M, N and K:\n");
+    settings.n = 0;
+    settings.m = 0;
+    settings.k = 0;
     result = validateSettings(&settings);
     assert(!result);
     printf("\n");
 
-    printf("Potentially invalid win requirement:\n");
-    settings.boardRows = 2;
-    settings.boardColumns = 3;
-    settings.winRequirement = 4;
+    printf("Potentially invalid K:\n");
+    settings.n = 2;
+    settings.m = 3;
+    settings.k = 4;
     result = validateSettings(&settings);
     assert(result);
     printf("\n");
 
-    printf("Invalid rows, columns, and potentially invalid win requirement:\n");
-    settings.boardRows = 0;
-    settings.boardColumns = 0;
-    settings.winRequirement = 4;
+    printf("Invalid M, N, and potentially invalid K:\n");
+    settings.n = 0;
+    settings.m = 0;
+    settings.k = 4;
     result = validateSettings(&settings);
     assert(!result);
     printf("\n");
 
     printf("Valid:\n");
-    settings.boardRows = 50;
-    settings.boardColumns = 6;
-    settings.winRequirement = 10;
+    settings.n = 50;
+    settings.m = 6;
+    settings.k = 10;
     result = validateSettings(&settings);
     assert(result);
     printf("\n");
@@ -214,9 +258,9 @@ static void validateSettingsTest(void)
 static void writeSettingsTest(void)
 {
     Settings settings = zeroedSettings();
-    settings.boardRows = 10;
-    settings.boardColumns = 1;
-    settings.winRequirement = 5;
+    settings.n = 10;
+    settings.m = 1;
+    settings.k = 5;
     writeSettings(stdout, &settings);
 }
 

@@ -17,12 +17,15 @@ typedef enum
 /* Returns 'X' for PLAYER_X, 'O' for PLAYER_O. */
 char playerToChar(Player player);
 
-
 /* Reads characters from a file until a given character is encountered.
    consume controls whether or not that character is consumed from the file.
    On success, returns 1.
    On error or EOF, returns 0. */
 int readUntil(FILE* file, char c, int consume);
+
+/* Checks if an entire string is whitespace.
+   Empty string is considered to be all whitespace. */
+int isWhitespace(char const* str);
 
 
 #endif
