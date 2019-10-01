@@ -1,33 +1,40 @@
-CC = gcc
-
+COMPILER = gcc
 CFLAGS = -ansi -pedantic -Wall -Werror -g -D DEBUG
+CC = $(COMPILER) $(CFLAGS)
 
 EXEC = tictactoe_test
-ALL_OBJ = main.o board_test.o common.o linked_list_test.o log_test.o settings_test.o
-EXT_OBJ = ../board.o ../common.o ../linked_list.o ../log.o ../settings.o
+TEST_OBJ = main.o board_test.o common.o linked_list_test.o log_test.o settings_test.o
+
+# Required object files from main build (relative to this directory).
+REQ_OBJ = ../board.o ../linked_list.o ../log.o ../settings.o ../common.o
 
 
-$(EXEC) : $(ALL_OBJ) $(EXT_OBJ)
-	$(CC) $(CFLAGS) $(ALL_OBJ) $(EXT_OBJ) -o $(EXEC)
+$(EXEC) : $(TEST_OBJ) $(REQ_OBJ)
+	$(CC) $(TEST_OBJ) $(REQ_OBJ) -o $(EXEC)
 
 main.o : main.c board_test.h linked_list_test.h settings_test.h
-	$(CC) $(CFLAGS) -c main.c -o main.o
+	$(CC) -c main.c -o main.o
 
 common.o : common.c common.h
-	$(CC) $(CFLAGS) -c common.c -o common.o
+	$(CC) -c common.c -o common.o
 
 board_test.o : board_test.c board_test.h common.h ../board.h
-	$(CC) $(CFLAGS) -c board_test.c -o board_test.o
+	$(CC) -c board_test.c -o board_test.o
 
 linked_list_test.o : linked_list_test.c linked_list_test.h common.h ../linked_list.h
-	$(CC) $(CFLAGS) -c linked_list_test.c -o linked_list_test.o
+	$(CC) -c linked_list_test.c -o linked_list_test.o
 
 log_test.o : log_test.c log_test.h common.h ../log.h
-	$(CC) $(CFLAGS) -c log_test.c -o log_test.o
+	$(CC) -c log_test.c -o log_test.o
 
 settings_test.o : settings_test.c settings_test.h common.h ../settings.h
-	$(CC) $(CFLAGS) -c settings_test.c -o settings_test.o
+	$(CC) -c settings_test.c -o settings_test.o
+
+# Resolves dependencies in the main build directory (../) and makes them
+# properly using that makefile.
+../%.o : ../%.c
+	$(MAKE) -C ../ $(@:../%=%)
 
 .PHONY: clean
 clean :
-	rm -f $(EXEC) $(ALL_OBJ)
+	rm -f $(EXEC) $(TEST_OBJ)
