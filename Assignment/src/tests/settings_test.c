@@ -3,30 +3,32 @@
 #include "settings_test.h"
 
 #include "common.h"
-#include "../settings.h"
+#include "../main/settings.h"
 
 #include <assert.h>
 #include <stdio.h>
 
 
-#define NONEXISTENT_FILE "test_settings/nonexistent_file.txt"
-#define EMPTY_FILE "test_settings/empty.txt"
-#define INVALID_FORMAT "test_settings/invalid_format.txt"
-#define INVALID_OPTION "test_settings/invalid_option.txt"
-#define INVALID_OPTIONS "test_settings/invalid_options.txt"
-#define MISSING_OPTION "test_settings/missing_option.txt"
-#define MISSING_OPTIONS "test_settings/missing_options.txt"
-#define DUPLICATE_OPTION "test_settings/duplicate_option.txt"
-#define DUPLICATE_OPTIONS "test_settings/duplicate_options.txt"
-#define INVALID_OPTION_AND_MISSING "test_settings/invalid_option_missing.txt"
-#define INVALID_FORMAT_AND_MISSING "test_settings/invalid_format_missing.txt"
-#define DUPLICATE_INVALID_FORMAT "test_settings/duplicate_invalid_format.txt"
-#define LINE_TOO_LONG "test_settings/line_too_long.txt"
-#define LAST_LINE_TOO_LONG "test_settings/last_line_too_long.txt"
-#define TRAILING_RUBBISH "test_settings/trailing_rubbish.txt"
-#define VALID "test_settings/valid.txt"
-#define VALID_NO_NEWLINE "test_settings/valid_no_newline.txt"
-#define VALID_EXTRA_SPACE "test_settings/valid_extra_space.txt"
+#define TEST_FILE_DIR "test_data/settings/"
+
+#define NONEXISTENT_FILE TEST_FILE_DIR "nonexistent_file.txt"
+#define EMPTY_FILE TEST_FILE_DIR "empty.txt"
+#define INVALID_FORMAT TEST_FILE_DIR "invalid_format.txt"
+#define INVALID_OPTION TEST_FILE_DIR "invalid_option.txt"
+#define INVALID_OPTIONS TEST_FILE_DIR "invalid_options.txt"
+#define MISSING_OPTION TEST_FILE_DIR "missing_option.txt"
+#define MISSING_OPTIONS TEST_FILE_DIR "missing_options.txt"
+#define DUPLICATE_OPTION TEST_FILE_DIR "duplicate_option.txt"
+#define DUPLICATE_OPTIONS TEST_FILE_DIR "duplicate_options.txt"
+#define INVALID_OPTION_AND_MISSING TEST_FILE_DIR "invalid_option_missing.txt"
+#define INVALID_FORMAT_AND_MISSING TEST_FILE_DIR "invalid_format_missing.txt"
+#define DUPLICATE_INVALID_FORMAT TEST_FILE_DIR "duplicate_invalid_format.txt"
+#define LINE_TOO_LONG "TEST_FILE_DIR line_too_long.txt"
+#define LAST_LINE_TOO_LONG TEST_FILE_DIR "last_line_too_long.txt"
+#define TRAILING_RUBBISH TEST_FILE_DIR "trailing_rubbish.txt"
+#define VALID TEST_FILE_DIR "valid.txt"
+#define VALID_NO_NEWLINE TEST_FILE_DIR "valid_no_newline.txt"
+#define VALID_EXTRA_SPACE TEST_FILE_DIR "valid_extra_space.txt"
 
 
 /* PRIVATE INTERFACE */

@@ -2,8 +2,8 @@
 
 #include "board_test.h"
 
-#include "../board.h"
 #include "common.h"
+#include "../main/board.h"
 
 #include <assert.h>
 #include <stdio.h>

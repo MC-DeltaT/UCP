@@ -2,8 +2,8 @@
 
 #include "linked_list_test.h"
 
-#include "../linked_list.h"
 #include "common.h"
+#include "../main/linked_list.h"
 
 #include <assert.h>
 #include <stdlib.h>

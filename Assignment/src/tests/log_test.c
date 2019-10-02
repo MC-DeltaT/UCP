@@ -2,8 +2,8 @@
 
 #include "log_test.h"
 
-#include "../log.h"
 #include "common.h"
+#include "../main/log.h"
 
 #include <stdio.h>
 
