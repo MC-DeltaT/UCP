@@ -150,5 +150,12 @@ void logTurn(Player player, unsigned row, unsigned column)
 
 void writeGameLogs(FILE* stream)
 {
-    listIterateForward(getGameLogs(), writeGameLogCallback, stream);
+    if (getGameLogs()->size == 0)
+    {
+        fprintf(stream, "<no games>\n");
+    }
+    else
+    {
+        listIterateForward(getGameLogs(), writeGameLogCallback, stream);
+    }
 }

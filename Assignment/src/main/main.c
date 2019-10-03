@@ -31,7 +31,7 @@ int main(int argc, char* argv[])
 
     if (!error)
     {
-        error = !validateSettings(&settings);
+        error = !validateSettings(&settings, 1);
     }
 
     if (!error)

@@ -73,7 +73,7 @@ static int hasWonColumn(GameBoard const* board, unsigned column,
        d e f        d: diagonal = 3
                     e: diagonal = 4
                     f: diagonal = 5 */
-static int hasWonRisingDiagonal(GameBoard const* board, unsigned diagonal,
+static int hasWonRisingDiagonal(GameBoard const* board, unsigned long diagonal,
                                 CellStatus status)
 {
     /* TODO */
@@ -91,7 +91,7 @@ static int hasWonRisingDiagonal(GameBoard const* board, unsigned diagonal,
        f e d        d: diagonal = 3
                     e: diagonal = 4
                     f: diagonal = 5 */
-static int hasWonFallingDiagonal(GameBoard const* board, unsigned diagonal,
+static int hasWonFallingDiagonal(GameBoard const* board, unsigned long diagonal,
                                 CellStatus status)
 {
     /*unsigned consecutive = 0;
@@ -114,7 +114,7 @@ static int hasWonFallingDiagonal(GameBoard const* board, unsigned diagonal,
    (but technically you could check if CELL_EMPTY has won :p ). */
 static int hasWon(GameBoard const* board, CellStatus status)
 {
-    unsigned i = 0;
+    unsigned long i = 0;
     int win = 0;
 
 
@@ -139,6 +139,7 @@ static int hasWon(GameBoard const* board, CellStatus status)
     while (i < board->columns + board->rows - 1u && !win)
     {
         win = hasWonRisingDiagonal(board, i, status);
+        ++i;
     }
 
     /* Check for a win across a falling diagonal. */
@@ -146,6 +147,7 @@ static int hasWon(GameBoard const* board, CellStatus status)
     while (i < board->columns + board->rows - 1u && !win)
     {
         win = hasWonFallingDiagonal(board, i, status);
+        ++i;
     }
 
     return win;

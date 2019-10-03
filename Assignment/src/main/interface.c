@@ -75,6 +75,7 @@ static long integerInput(char const* prompt)
 }
 
 
+/* Gets a non-negative integer from the user. */
 static unsigned unsignedIntInput(char const* prompt)
 {
     int valid = 0;
@@ -100,10 +101,11 @@ static unsigned unsignedIntInput(char const* prompt)
 }
 
 
+/* Gets a coordinate from the user in the form column,row. */
 static void coordinateInput(char const* prompt, long* row, long* column)
 {
     int valid = 0;
-    static char line[128] = {0};
+    char line[128] = {0};
     int scanRes = 0;
     int scanned = 0;
 
@@ -116,7 +118,7 @@ static void coordinateInput(char const* prompt, long* row, long* column)
         if (strchr(line, '\n'))
         {
             /* Can't use %u format specifier again. */
-            scanRes = sscanf(line, "%ld,%ld%n", column, row, &scanned);
+            scanRes = sscanf(line, "%ld ,%ld%n", column, row, &scanned);
             /* No idea what happens if the character read count can't fit in an
                int (%n doesn't seem to work correctly with long int), it doesn't
                seem to be documented. That shouldn't happen in this case,
@@ -158,6 +160,10 @@ static void playerTurn(GameBoard* board, Player player)
         {
             fprintf(stderr, "Error: coordinate out of bounds.\n");
         }
+        else if (getCell(board, row, column) != CELL_EMPTY)
+        {
+            fprintf(stderr, "Error: cell already occupied.\n");
+        }
         else
         {
             validCoordinate = 1;
@@ -165,6 +171,7 @@ static void playerTurn(GameBoard* board, Player player)
     } while(!validCoordinate);
 
     setCell(board, row, column, playerToCell(player));
+    logTurn(player, row, column);
 }
 
 
@@ -178,20 +185,29 @@ static int runGame(Settings* settings)
     unsigned long const cells = board.rows * board.columns;
 
     newGameLog();
+    displayGameBoard(&board);
+    printf("\n");
 
     while (placed < cells && !xWon && !oWon)
     {
         playerTurn(&board, PLAYER_X);
         ++placed;
+
         printf("\n");
         displayGameBoard(&board);
+        printf("\n");
+
         xWon = hasXWon(&board);
+
         if (!xWon)
         {
             playerTurn(&board, PLAYER_O);
             ++placed;
+
             printf("\n");
             displayGameBoard(&board);
+            printf("\n");
+
             oWon = hasOWon(&board);
         }
     }
@@ -219,9 +235,7 @@ static int runGame(Settings* settings)
 /* Displays the current settings to the user. */
 static int displaySettings(Settings* settings)
 {
-    printf("\n");
     writeSettings(stdout, settings);
-    printf("\n");
 
     return 0;
 }
@@ -230,7 +244,6 @@ static int displaySettings(Settings* settings)
 /* Displays game logs to the user. */
 static int displayLogs(Settings* _)
 {
-    printf("\n");
     writeGameLogs(stdout);
 
     return 0;
@@ -253,7 +266,7 @@ static int saveLogs(Settings* settings)
 
     res = sprintf(fileName, "MNK_%u-%u-%u_%.2i-%.2i_%.2i-%.2i.log",
         settings->m, settings->n, settings->k, time->tm_hour, time->tm_min,
-        time->tm_mday, time->tm_mon);
+        time->tm_mday, time->tm_mon + 1);
     assert(res > 0);
 
     printf("Saving logs to file %s ...", fileName);
@@ -261,6 +274,7 @@ static int saveLogs(Settings* settings)
     if (file)
     {
         writeSettings(file, settings);
+        fprintf(file, "\n");
         writeGameLogs(file);
 
         if (ferror(file))
@@ -291,14 +305,21 @@ static int editSettings(Settings* settings)
 {
     do
     {
-        settings->m = unsignedIntInput("Enter new M value: ");
+        do
+        {
+            settings->m = unsignedIntInput("Enter new M value: ");
+        } while (!validateMSetting(settings->m));
 
-        settings->n = unsignedIntInput("Enter new N value: ");
+        do
+        {
+            settings->n = unsignedIntInput("Enter new N value: ");
+        } while (!validateNSetting(settings->n));
 
-        settings->k = unsignedIntInput("Enter new K value: ");
-
-        printf("\n");
-    } while (!validateSettings(settings));
+        do
+        {
+            settings->k = unsignedIntInput("Enter new K value: ");
+        } while (!validateKSetting(settings->k, 1));
+    } while (!validateSettingsCombo(settings, 1));
 
     return 0;
 }
@@ -307,6 +328,7 @@ static int editSettings(Settings* settings)
 
 static int exitApplication(Settings* _)
 {
+    printf("Exiting.\n");
     /* Non-zero return signals mainMenu() to exit. */
     return 1;
 }
@@ -340,12 +362,13 @@ void mainMenu(Settings* settings)
     int exit = 0;
     int validOption = 0;
 
+    printf("\n");
     do
     {
         printf("Main menu:\n");
         for (i = 0; i < MENU_OPTION_COUNT; ++i)
         {
-            printf("\t%u) %s\n", i + 1u, menuOptions[i].option);
+            printf("    %u) %s\n", i + 1u, menuOptions[i].option);
         }
         printf("\n");
 
@@ -353,7 +376,7 @@ void mainMenu(Settings* settings)
         do
         {
             choice = unsignedIntInput("Enter an option: ");
-            if (choice < MENU_OPTION_COUNT)
+            if (choice >= 1 && choice <= MENU_OPTION_COUNT)
             {
                 validOption = 1;
             }
@@ -361,12 +384,14 @@ void mainMenu(Settings* settings)
             {
                 assert(MENU_OPTION_COUNT - 1ul < ULONG_MAX);
                 fprintf(stderr, "Error: option must be >=1 and <=%lu.\n",
-                    (unsigned long)(MENU_OPTION_COUNT - 1ul));
+                    (unsigned long)MENU_OPTION_COUNT);
             }
         } while (!validOption);
         --choice;
 
+        printf("\n");
         assert(choice < MENU_OPTION_COUNT);
         exit = menuOptions[choice].handler(settings);
+        printf("\n");
     } while (!exit);
 }

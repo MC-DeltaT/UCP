@@ -58,25 +58,32 @@ TEST_REQ_OBJ := $(addprefix $(MAIN_OBJ_DIR)/, $(TEST_REQ_OBJ))
 $(MAIN_EXEC) : $(MAIN_OBJ)
 	$(MAIN_CC) $^ -o $@
 
-$(MAIN_OBJ_DIR)/main.o : $(call MAIN_SRC, main.c interface.h settings.h)
+$(MAIN_OBJ_DIR)/main.o : $(call MAIN_SRC, main.c interface.h settings.h) \
+						| $(MAIN_OBJ_DIR)
 	$(MAIN_CC) -c $< -o $@
 
-$(MAIN_OBJ_DIR)/board.o : $(call MAIN_SRC, board.c board.h common.h)
+$(MAIN_OBJ_DIR)/board.o : $(call MAIN_SRC, board.c board.h common.h) \
+							| $(MAIN_OBJ_DIR)
 	$(MAIN_CC) -c $< -o $@
 
-$(MAIN_OBJ_DIR)/common.o : $(call MAIN_SRC, common.c common.h)
+$(MAIN_OBJ_DIR)/common.o : $(call MAIN_SRC, common.c common.h) \
+							| $(MAIN_OBJ_DIR)
 	$(MAIN_CC) -c $< -o $@
 
-$(MAIN_OBJ_DIR)/interface.o : $(call MAIN_SRC, interface.c interface.h board.h common.h log.h settings.h)
+$(MAIN_OBJ_DIR)/interface.o : $(call MAIN_SRC, interface.c interface.h board.h common.h log.h settings.h) \
+								| $(MAIN_OBJ_DIR)
 	$(MAIN_CC) -c $< -o $@
 
-$(MAIN_OBJ_DIR)/linked_list.o : $(call MAIN_SRC, linked_list.c linked_list.h)
+$(MAIN_OBJ_DIR)/linked_list.o : $(call MAIN_SRC, linked_list.c linked_list.h) \
+								| $(MAIN_OBJ_DIR)
 	$(MAIN_CC) -c $< -o $@
 
-$(MAIN_OBJ_DIR)/log.o : $(call MAIN_SRC, log.c log.h common.h linked_list.h)
+$(MAIN_OBJ_DIR)/log.o : $(call MAIN_SRC, log.c log.h common.h linked_list.h) \
+						| $(MAIN_OBJ_DIR)
 	$(MAIN_CC) -c $< -o $@
 
-$(MAIN_OBJ_DIR)/settings.o : $(call MAIN_SRC, settings.c settings.h common.h)
+$(MAIN_OBJ_DIR)/settings.o : $(call MAIN_SRC, settings.c settings.h common.h) \
+							| $(MAIN_OBJ_DIR)
 	$(MAIN_CC) -c $< -o $@
 
 
@@ -85,29 +92,41 @@ $(MAIN_OBJ_DIR)/settings.o : $(call MAIN_SRC, settings.c settings.h common.h)
 $(TEST_EXEC) : $(TEST_OBJ) $(TEST_REQ_OBJ)
 	$(TEST_CC) $^ -o $@
 
-$(TEST_OBJ_DIR)/main.o : $(call TEST_SRC, main.c board_test.h common_test.h log_test.h linked_list_test.h settings_test.h)
+$(TEST_OBJ_DIR)/main.o : $(call TEST_SRC, main.c board_test.h common_test.h log_test.h linked_list_test.h settings_test.h) \
+						| $(TEST_OBJ_DIR)
 	$(TEST_CC) -c $< -o $@
 
-$(TEST_OBJ_DIR)/board_test.o : $(call TEST_SRC, board_test.c board_test.h common.h) $(call MAIN_SRC, board.h common.h)
+$(TEST_OBJ_DIR)/board_test.o : $(call TEST_SRC, board_test.c board_test.h common.h) $(call MAIN_SRC, board.h common.h) \
+								| $(TEST_OBJ_DIR)
 	$(TEST_CC) -c $< -o $@
 
-$(TEST_OBJ_DIR)/common.o : $(call TEST_SRC, common.c common.h)
+$(TEST_OBJ_DIR)/common.o : $(call TEST_SRC, common.c common.h) | $(TEST_OBJ_DIR)
 	$(TEST_CC) -c $< -o $@
 
-$(TEST_OBJ_DIR)/common_test.o : $(call TEST_SRC, common_test.c common_test.h common.h) $(call MAIN_SRC, common.h)
+$(TEST_OBJ_DIR)/common_test.o : $(call TEST_SRC, common_test.c common_test.h common.h) \
+								$(call MAIN_SRC, common.h) | $(TEST_OBJ_DIR)
 	$(TEST_CC) -c $< -o $@
 
-$(TEST_OBJ_DIR)/linked_list_test.o : $(call TEST_SRC, linked_list_test.c linked_list_test.h common.h) $(call MAIN_SRC, linked_list.h)
+$(TEST_OBJ_DIR)/linked_list_test.o : $(call TEST_SRC, linked_list_test.c linked_list_test.h common.h) \
+									$(call MAIN_SRC, linked_list.h) | $(TEST_OBJ_DIR)
 	$(TEST_CC) -c $< -o $@
 
-$(TEST_OBJ_DIR)/log_test.o : $(call TEST_SRC, log_test.c log_test.h common.h) $(call MAIN_SRC, log.h common.h)
+$(TEST_OBJ_DIR)/log_test.o : $(call TEST_SRC, log_test.c log_test.h common.h) \
+								$(call MAIN_SRC, log.h common.h) | $(TEST_OBJ_DIR)
 	$(TEST_CC) -c $< -o $@
 
-$(TEST_OBJ_DIR)/settings_test.o : $(call TEST_SRC, settings_test.c settings_test.h common.h) $(call MAIN_SRC, settings.h)
+$(TEST_OBJ_DIR)/settings_test.o : $(call TEST_SRC, settings_test.c settings_test.h common.h) \
+									$(call MAIN_SRC, settings.h) | $(TEST_OBJ_DIR)
 	$(TEST_CC) -c $< -o $@
 
 
 # Other build rules.
+
+$(MAIN_OBJ_DIR) :
+	mkdir -p $@
+
+$(TEST_OBJ_DIR) :
+	mkdir -p $@
 
 .PHONY: clean
 clean :

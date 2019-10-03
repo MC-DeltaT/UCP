@@ -101,26 +101,30 @@ static void readSettingsLine(FILE* file, OptionData options[],
         /* Whole line was read. */
         if (feof(file) || strchr(line, '\n'))
         {
-            /* Can't use %u format specifier, because that, for some ungodly
-               reason, actually accepts negative values, and then wraps them
-               around to large positive values. */
-            scanRes = sscanf(line, " %c =%ld%n", &optionChar, &optionVal,
-                &scanned);
-            /* No idea what happens if the character read count can't fit in an
-               int (%n doesn't seem to work correctly with long int), it doesn't
-               seem to be documented. That shouldn't happen in this case,
-               however.*/
-            if (scanRes == 2 && isWhitespace(line + scanned))
+            /* Ignore blank lines. */
+            if (!isWhitespace(line))
             {
-                setOption(options, optionCount, optionChar, optionVal,
-                    *lineCount, error);
-            }
-            else
-            {
-                fprintf(stderr,
-                    "Error in settings file, line %u: invalid option format.\n",
-                    *lineCount);
-                *error = 1;
+                /* Can't use %u format specifier, because that, for some ungodly
+                   reason, actually accepts negative values, and then wraps them
+                   around to large positive values. */
+                scanRes = sscanf(line, " %c =%ld%n", &optionChar, &optionVal,
+                    &scanned);
+                /* No idea what happens if the character read count can't fit in
+                   an int (%n doesn't seem to work correctly with long int), it
+                   doesn't seem to be documented. That shouldn't happen in this
+                   case, however.*/
+                if (scanRes == 2 && isWhitespace(line + scanned))
+                {
+                    setOption(options, optionCount, optionChar, optionVal,
+                        *lineCount, error);
+                }
+                else
+                {
+                    fprintf(stderr,
+                        "Error in settings file, line %u: invalid option format.\n",
+                        *lineCount);
+                    *error = 1;
+                }
             }
         }
         /* Line too long for buffer. */
@@ -218,37 +222,84 @@ Settings readSettings(char const* filePath, int* error)
 }
 
 
-int validateSettings(Settings const* settings)
+int validateMSetting(unsigned m)
 {
     int result = 1;
-    unsigned n = settings->n;
-    unsigned m = settings->m;
-    unsigned k = settings->k;
-
-    if (n == 0)
-    {
-        fprintf(stderr, "Invalid settings: N must be >0.\n");
-        result = 0;
-    }
 
     if (m == 0)
     {
-        fprintf(stderr, "Invalid settings: M must be >0.\n");
+        fprintf(stderr, "Invalid setting: M must be >0.\n");
         result = 0;
     }
+
+    return result;
+}
+
+
+int validateNSetting(unsigned n)
+{
+    int result = 1;
+
+    if (n == 0)
+    {
+        fprintf(stderr, "Invalid setting: N must be >0.\n");
+        result = 0;
+    }
+
+    return result;
+}
+
+
+int validateKSetting(unsigned k, int warnings)
+{
+    int result = 1;
 
     if (k == 0)
     {
-        fprintf(stderr, "Invalid settings: K must be >0.\n");
+        fprintf(stderr, "Invalid setting: K must be >0.\n");
         result = 0;
     }
 
-    /* Doesn't make sense to show this if board dimensions are 0. */
-    if (result && k > n && k > m)
+    if (warnings && result && k == 1)
+    {
+        printf("Warning: K=1 will cause the first player to win instantly.\n");
+    }
+
+    return result;
+}
+
+
+int validateSettingsCombo(Settings const* settings, int warnings)
+{
+    int result = 1;
+    unsigned m = settings->m;
+    unsigned n = settings->n;
+    unsigned k = settings->k;
+
+    if (warnings && result && k > n && k > m)
     {
         printf(
-            "Warning: with the set M, N and K values, games can only end in a draw.\n");
+            "Warning: with the set M, N and K values, no player can win a game.\n"
+        );
     }
+
+    return result;
+}
+
+
+int validateSettings(Settings const* settings, int warnings)
+{
+    /* unsigned type, bitwise operations on signed is asking for trouble. */
+    unsigned result = 1;
+    unsigned m = settings->m;
+    unsigned n = settings->n;
+    unsigned k = settings->k;
+
+    result &= validateMSetting(m);
+    result &= validateNSetting(n);
+    /* Don't show warnings if settings are already invalid. */
+    result &= validateKSetting(k, result);
+    result &= validateSettingsCombo(settings, result);
 
     return result;
 }
