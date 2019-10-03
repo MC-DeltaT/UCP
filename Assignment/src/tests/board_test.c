@@ -4,6 +4,7 @@
 
 #include "common.h"
 #include "../main/board.h"
+#include "../main/common.h"
 
 #include <assert.h>
 #include <stdio.h>
@@ -268,6 +269,14 @@ static void displayGameBoardTest(void)
 }
 
 
+/* Tests playerToCell(). */
+static void playerToCellTest(void)
+{
+    assert(playerToCell(PLAYER_X) == CELL_X);
+    assert(playerToCell(PLAYER_O) == CELL_O);
+}
+
+
 
 /* PUBLIC INTERFACE */
 
@@ -283,4 +292,5 @@ void boardTest(void)
     runUnitTest("setCell() and getCell()", setGetCellTest);
     runUnitTest("clearCells()", clearCellsTest);
     runUnitTest("displayGameBoard()", displayGameBoardTest);
+    runUnitTest("playerToCell()", playerToCellTest);
 }

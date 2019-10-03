@@ -9,6 +9,9 @@
 #include <stdio.h>
 
 
+/* PRIVATE INTERFACE */
+
+
 #define TEST_FILE_DIR "test_data/settings/"
 
 #define NONEXISTENT_FILE TEST_FILE_DIR "nonexistent_file.txt"
@@ -23,15 +26,12 @@
 #define INVALID_OPTION_AND_MISSING TEST_FILE_DIR "invalid_option_missing.txt"
 #define INVALID_FORMAT_AND_MISSING TEST_FILE_DIR "invalid_format_missing.txt"
 #define DUPLICATE_INVALID_FORMAT TEST_FILE_DIR "duplicate_invalid_format.txt"
-#define LINE_TOO_LONG "TEST_FILE_DIR line_too_long.txt"
+#define LINE_TOO_LONG TEST_FILE_DIR "line_too_long.txt"
 #define LAST_LINE_TOO_LONG TEST_FILE_DIR "last_line_too_long.txt"
 #define TRAILING_RUBBISH TEST_FILE_DIR "trailing_rubbish.txt"
 #define VALID TEST_FILE_DIR "valid.txt"
 #define VALID_NO_NEWLINE TEST_FILE_DIR "valid_no_newline.txt"
 #define VALID_EXTRA_SPACE TEST_FILE_DIR "valid_extra_space.txt"
-
-
-/* PRIVATE INTERFACE */
 
 
 /* Asserts that all members of a Settings instance are zeroed out. */

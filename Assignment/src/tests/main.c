@@ -1,6 +1,7 @@
 /* Unit test entry point. */
 
 #include "board_test.h"
+#include "common_test.h"
 #include "linked_list_test.h"
 #include "log_test.h"
 #include "settings_test.h"
@@ -14,6 +15,7 @@ int main(void)
     srand(time(NULL));
 
     boardTest();
+    commonTest();
     linkedListTest();
     logTest();
     settingsTest();

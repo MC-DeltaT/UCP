@@ -16,9 +16,9 @@ TEST_OBJ_DIR = obj/tests
 # Main project object files.
 MAIN_OBJ = main.o board.o common.o interface.o linked_list.o log.o settings.o
 # Unit test object files.
-TEST_OBJ = main.o board_test.o common.o linked_list_test.o log_test.o settings_test.o
+TEST_OBJ = main.o board_test.o common.o common_test.o linked_list_test.o log_test.o settings_test.o
 # Main build object files required for tests.
-TEST_REQ_OBJ = board.o linked_list.o log.o settings.o common.o
+TEST_REQ_OBJ = board.o common.o linked_list.o log.o settings.o
 
 # C compiler command.
 COMPILER = gcc
@@ -85,13 +85,16 @@ $(MAIN_OBJ_DIR)/settings.o : $(call MAIN_SRC, settings.c settings.h common.h)
 $(TEST_EXEC) : $(TEST_OBJ) $(TEST_REQ_OBJ)
 	$(TEST_CC) $^ -o $@
 
-$(TEST_OBJ_DIR)/main.o : $(call TEST_SRC, main.c board_test.h linked_list_test.h settings_test.h)
+$(TEST_OBJ_DIR)/main.o : $(call TEST_SRC, main.c board_test.h common_test.h log_test.h linked_list_test.h settings_test.h)
+	$(TEST_CC) -c $< -o $@
+
+$(TEST_OBJ_DIR)/board_test.o : $(call TEST_SRC, board_test.c board_test.h common.h) $(call MAIN_SRC, board.h common.h)
 	$(TEST_CC) -c $< -o $@
 
 $(TEST_OBJ_DIR)/common.o : $(call TEST_SRC, common.c common.h)
 	$(TEST_CC) -c $< -o $@
 
-$(TEST_OBJ_DIR)/board_test.o : $(call TEST_SRC, board_test.c board_test.h common.h) $(call MAIN_SRC, board.h common.h)
+$(TEST_OBJ_DIR)/common_test.o : $(call TEST_SRC, common_test.c common_test.h common.h) $(call MAIN_SRC, common.h)
 	$(TEST_CC) -c $< -o $@
 
 $(TEST_OBJ_DIR)/linked_list_test.o : $(call TEST_SRC, linked_list_test.c linked_list_test.h common.h) $(call MAIN_SRC, linked_list.h)
