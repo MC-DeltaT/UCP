@@ -2,6 +2,8 @@
 
 #include "board.h"
 
+#include "common.h"
+
 #include <assert.h>
 #include <stddef.h>
 #include <stdio.h>
@@ -11,143 +13,164 @@
 /* PRIVATE INTERFACE */
 
 
-/* Checks if the given status occurs consecutively enough across the given row
-   to be a win. */
-static int hasWonRow(GameBoard const* board, unsigned row,
-                     CellStatus status)
+/* Checks if the given status occurs consecutively enough along any row to be a
+   win. */
+static int hasWonRow(GameBoard const* board, CellStatus status)
 {
-    unsigned consecutive = 0;
-    unsigned j = 0;
-
-    while(j < board->columns && consecutive < board->winRequirement)
-    {
-        if (getCell(board, row, j) == status)
-        {
-            ++consecutive;
-        }
-        else
-        {
-            consecutive = 0;
-        }
-
-        ++j;
-    }
-
-    return consecutive >= board->winRequirement;
-}
-
-
-/* Checks if the given status occurs consecutively enough across the given
-   column to be a win. */
-static int hasWonColumn(GameBoard const* board, unsigned column,
-                        CellStatus status)
-{
+    int win = 0;
     unsigned consecutive = 0;
     unsigned i = 0;
+    unsigned j = 0;
 
-    while(i < board->rows && consecutive < board->winRequirement)
+    while (i < board->rows && !win)
     {
-        if (getCell(board, i, column) == status)
+        consecutive = 0;
+        j = 0;
+        while (j < board->columns && consecutive < board->winRequirement)
         {
-            ++consecutive;
+            if (getCell(board, i, j) == status)
+            {
+                ++consecutive;
+            }
+            else
+            {
+                consecutive = 0;
+            }
+            ++j;
+        }
+        ++i;
+        win = consecutive >= board->winRequirement;
+    }
+
+    return win;
+}
+
+
+/* Checks if the given status occurs consecutively enough along any column to
+   be a win. */
+static int hasWonColumn(GameBoard const* board, CellStatus status)
+{
+    int win = 0;
+    unsigned consecutive = 0;
+    unsigned i = 0;
+    unsigned j = 0;
+
+    while (j < board->columns && !win)
+    {
+        consecutive = 0;
+        i = 0;
+        while (i < board->rows && consecutive < board->winRequirement)
+        {
+            if (getCell(board, i, j) == status)
+            {
+                ++consecutive;
+            }
+            else
+            {
+                consecutive = 0;
+            }
+            ++i;
+        }
+        ++j;
+        win = consecutive >= board->winRequirement;
+    }
+
+    return win;
+}
+
+
+/* Checks if the given status occurs consecutively enough along any rising
+   diagonal to be a win.
+   A falling diagonal is one that goes from the bottom of the board to the top
+   and it goes from left to right. */
+static int hasWonRisingDiagonal(GameBoard const* board, CellStatus status)
+{
+    int win = 0;
+    unsigned consecutive = 0;
+    unsigned long diagonal = 0;
+    long i = 0;
+    unsigned j = 0;
+    unsigned long const numDiagonals = board->rows - 1ul + board->columns;
+
+    while (diagonal < numDiagonals && !win)
+    {
+        /* Start at bottom left of diagonal, either on first row or last column. */
+        if (diagonal < board->rows)
+        {
+            i = diagonal;
+            j = 0;
         }
         else
         {
-            consecutive = 0;
+            i = board->rows - 1u;
+            j = diagonal + 1u - board->rows;
         }
 
-        ++i;
+        /* Scan up to top right of diagonal. */
+        while (i >= 0 && inBoardBounds(board, i, j) && !win)
+        {
+            if (getCell(board, i, j) == status)
+            {
+                ++consecutive;
+            }
+            else
+            {
+                consecutive = 0;
+            }
+            --i;
+            ++j;
+            win = consecutive >= board->winRequirement;
+        }
+        ++diagonal;
     }
 
-    return consecutive >= board->winRequirement;
+    return win;
 }
 
 
-/* Checks if the given status occurs consecutively enough across the given
-   rising diagonal to be a win.
-   Diagramatic explanation:
-     Grid:          Path checked:
-       a b c        a: diagonal = 0
-       b c d        b: diagonal = 1
-       c d e        c: diagonal = 2
-       d e f        d: diagonal = 3
-                    e: diagonal = 4
-                    f: diagonal = 5 */
-static int hasWonRisingDiagonal(GameBoard const* board, unsigned long diagonal,
-                                CellStatus status)
+/* Checks if the given status occurs consecutively enough along any falling
+   diagonal to be a win.
+   A falling diagonal is one that goes from the top of the board to the bottom
+   and it goes from left to right. */
+static int hasWonFallingDiagonal(GameBoard const* board, CellStatus status)
 {
-    /* TODO */
-    return 0;
-}
-
-
-/* Checks if the given status occurs consecutively enough across the given
-   falling diagonal to be a win.
-   Diagramatic explanation:
-     Grid:          Path checked:
-       c b a        a: diagonal = 0
-       d c b        b: diagonal = 1
-       e d c        c: diagonal = 2
-       f e d        d: diagonal = 3
-                    e: diagonal = 4
-                    f: diagonal = 5 */
-static int hasWonFallingDiagonal(GameBoard const* board, unsigned long diagonal,
-                                CellStatus status)
-{
-    /*unsigned consecutive = 0;
-    unsigned i;
-    unsigned j;
-
-    assert(diagonal + 1u < board->rows + board->columns);
-    i = board->rows - diagonal - 1u;
-
-    return consecutive >= board->winRequirement;*/
-
-    /* TODO */
-
-    return 0;
-}
-
-
-/* Checks if X or O has won on the given board.
-   status should be either CELL_X or CELL_O
-   (but technically you could check if CELL_EMPTY has won :p ). */
-static int hasWon(GameBoard const* board, CellStatus status)
-{
-    unsigned long i = 0;
     int win = 0;
+    unsigned consecutive = 0;
+    unsigned long diagonal = 0;
+    unsigned i = 0;
+    unsigned j = 0;
+    unsigned long const numDiagonals = board->rows - 1ul + board->columns;
 
-
-    /* Check for a win across a row. */
-    i = 0;
-    while (i < board->rows && !win)
+    while (diagonal < numDiagonals && !win)
     {
-        win = hasWonRow(board, i, status);
-        ++i;
-    }
+        /* Start at top left of diagonal, either on first row or first column. */
+        if (diagonal < board->columns)
+        {
+            i = 0;
+            j = board->columns - diagonal - 1u;
+        }
+        else
+        {
+            i = diagonal + 1u - board->columns;
+            j = 0;
+        }
 
-    /* Check for a win across a column. */
-    i = 0;
-    while (i < board->columns && !win)
-    {
-        win = hasWonColumn(board, i, status);
-        ++i;
-    }
-
-    /* Check for a win across a rising diagonal.*/
-    i = 0;
-    while (i < board->columns + board->rows - 1u && !win)
-    {
-        win = hasWonRisingDiagonal(board, i, status);
-        ++i;
-    }
-
-    /* Check for a win across a falling diagonal. */
-    i = 0;
-    while (i < board->columns + board->rows - 1u && !win)
-    {
-        win = hasWonFallingDiagonal(board, i, status);
-        ++i;
+        /* Scan down to bottom right of diagonal. */
+        while (inBoardBounds(board, i, j) && !win)
+        {
+            if (getCell(board, i, j) == status)
+            {
+                ++consecutive;
+            }
+            else
+            {
+                consecutive = 0;
+            }
+            ++i;
+            ++j;
+            win = consecutive >= board->winRequirement;
+        }
+        ++diagonal;
     }
 
     return win;
@@ -171,7 +194,7 @@ GameBoard zeroedGameBoard(void)
 
 
 GameBoard createGameBoard(unsigned rows, unsigned columns,
-                          unsigned winRequirement)
+    unsigned winRequirement)
 {
     GameBoard board;
 
@@ -215,15 +238,24 @@ void clearCells(GameBoard* board)
 }
 
 
-int hasXWon(GameBoard const* board)
+int hasPlayerWon(GameBoard const* board, Player player)
 {
-    return hasWon(board, CELL_X);
-}
+    int win = 0;
+    CellStatus cellStatus = playerToCell(player);
 
+    /* Check for a win along a row. */
+    win = win || hasWonRow(board, cellStatus);
 
-int hasOWon(GameBoard const* board)
-{
-    return hasWon(board, CELL_O);
+    /* Check for a win along a column. */
+    win = win || hasWonColumn(board, cellStatus);
+
+    /* Check for a win along a rising diagonal.*/
+    win = win || hasWonRisingDiagonal(board, cellStatus);
+
+    /* Check for a win along a falling diagonal. */
+    win = win || hasWonFallingDiagonal(board, cellStatus);
+
+    return win;
 }
 
 

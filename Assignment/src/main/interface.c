@@ -197,7 +197,7 @@ static int runGame(Settings* settings)
         displayGameBoard(&board);
         printf("\n");
 
-        xWon = hasXWon(&board);
+        xWon = hasPlayerWon(&board, PLAYER_X);
 
         if (!xWon)
         {
@@ -208,7 +208,7 @@ static int runGame(Settings* settings)
             displayGameBoard(&board);
             printf("\n");
 
-            oWon = hasOWon(&board);
+            oWon = hasPlayerWon(&board, PLAYER_O);
         }
     }
 

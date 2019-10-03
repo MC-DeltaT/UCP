@@ -226,6 +226,164 @@ static void clearCellsTest(void)
 }
 
 
+/* Tests hasPlayerWon(). */
+static void hasPlayerWonTest(void)
+{
+    GameBoard board = zeroedGameBoard();
+
+    printf("Rows < columns (diff>1):\n");
+    board = createGameBoard(8, 10, 3);
+    assert(!hasPlayerWon(&board, PLAYER_X));
+    assert(!hasPlayerWon(&board, PLAYER_O));
+    destroyGameBoard(&board);
+    printf("\n");
+
+    printf("Rows < columns (diff=1):\n");
+    board = createGameBoard(9, 10, 3);
+    assert(!hasPlayerWon(&board, PLAYER_X));
+    assert(!hasPlayerWon(&board, PLAYER_O));
+    destroyGameBoard(&board);
+    printf("\n");
+
+    printf("Rows = columns:\n");
+    board = createGameBoard(10, 10, 3);
+    assert(!hasPlayerWon(&board, PLAYER_X));
+    assert(!hasPlayerWon(&board, PLAYER_O));
+    destroyGameBoard(&board);
+    printf("\n");
+
+    printf("Rows > columns (diff=1):\n");
+    board = createGameBoard(10, 9, 3);
+    assert(!hasPlayerWon(&board, PLAYER_X));
+    assert(!hasPlayerWon(&board, PLAYER_O));
+    destroyGameBoard(&board);
+    printf("\n");
+
+    printf("Rows > columns (diff>1):\n");
+    board = createGameBoard(10, 8, 3);
+    assert(!hasPlayerWon(&board, PLAYER_X));
+    assert(!hasPlayerWon(&board, PLAYER_O));
+    destroyGameBoard(&board);
+    printf("\n");
+
+    printf("Horizontal win (edge):\n");
+    board = createGameBoard(10, 7, 4);
+    setCell(&board, 0, 0, CELL_X);
+    setCell(&board, 0, 1, CELL_X);
+    setCell(&board, 0, 2, CELL_X);
+    setCell(&board, 0, 3, CELL_X);
+    assert(hasPlayerWon(&board, PLAYER_X));
+    assert(!hasPlayerWon(&board, PLAYER_O));
+    destroyGameBoard(&board);
+    printf("\n");
+
+    printf("Horizontal win (non-edge):\n");
+    board = createGameBoard(4, 7, 4);
+    setCell(&board, 2, 2, CELL_O);
+    setCell(&board, 2, 3, CELL_O);
+    setCell(&board, 2, 4, CELL_O);
+    setCell(&board, 2, 5, CELL_O);
+    assert(hasPlayerWon(&board, PLAYER_O));
+    assert(!hasPlayerWon(&board, PLAYER_X));
+    destroyGameBoard(&board);
+    printf("\n");
+
+    printf("Vertical win (edge):\n");
+    board = createGameBoard(10, 7, 4);
+    setCell(&board, 0, 0, CELL_O);
+    setCell(&board, 1, 0, CELL_O);
+    setCell(&board, 2, 0, CELL_O);
+    setCell(&board, 3, 0, CELL_O);
+    assert(hasPlayerWon(&board, PLAYER_O));
+    assert(!hasPlayerWon(&board, PLAYER_X));
+    destroyGameBoard(&board);
+    printf("\n");
+
+    printf("Vertical win (non-edge):\n");
+    board = createGameBoard(9, 7, 4);
+    setCell(&board, 4, 3, CELL_X);
+    setCell(&board, 5, 3, CELL_X);
+    setCell(&board, 6, 3, CELL_X);
+    setCell(&board, 7, 3, CELL_X);
+    assert(hasPlayerWon(&board, PLAYER_X));
+    assert(!hasPlayerWon(&board, PLAYER_O));
+    destroyGameBoard(&board);
+    printf("\n");
+
+    printf("Rising diagonal win (from corner):\n");
+    board = createGameBoard(10, 5, 4);
+    setCell(&board, 9, 0, CELL_O);
+    setCell(&board, 8, 1, CELL_O);
+    setCell(&board, 7, 2, CELL_O);
+    setCell(&board, 6, 3, CELL_O);
+    assert(hasPlayerWon(&board, PLAYER_O));
+    assert(!hasPlayerWon(&board, PLAYER_X));
+    destroyGameBoard(&board);
+    printf("\n");
+
+    printf("Rising diagonal win (not from corner):\n");
+    board = createGameBoard(7, 7, 4);
+    setCell(&board, 5, 2, CELL_X);
+    setCell(&board, 4, 3, CELL_X);
+    setCell(&board, 3, 4, CELL_X);
+    setCell(&board, 2, 5, CELL_X);
+    assert(hasPlayerWon(&board, PLAYER_X));
+    assert(!hasPlayerWon(&board, PLAYER_O));
+    destroyGameBoard(&board);
+    printf("\n");
+
+    printf("Falling diagonal win (from corner):\n");
+    board = createGameBoard(8, 10, 4);
+    setCell(&board, 0, 0, CELL_X);
+    setCell(&board, 1, 1, CELL_X);
+    setCell(&board, 2, 2, CELL_X);
+    setCell(&board, 3, 3, CELL_X);
+    assert(hasPlayerWon(&board, PLAYER_X));
+    assert(!hasPlayerWon(&board, PLAYER_O));
+    destroyGameBoard(&board);
+    printf("\n");
+
+    printf("Falling diagonal win (not from corner):\n");
+    board = createGameBoard(7, 7, 4);
+    setCell(&board, 2, 3, CELL_O);
+    setCell(&board, 3, 4, CELL_O);
+    setCell(&board, 4, 5, CELL_O);
+    setCell(&board, 5, 6, CELL_O);
+    assert(hasPlayerWon(&board, PLAYER_O));
+    assert(!hasPlayerWon(&board, PLAYER_X));
+    destroyGameBoard(&board);
+    printf("\n");
+
+    printf("Almost win:\n");
+    board = createGameBoard(6, 8, 3);
+    setCell(&board, 1, 1, CELL_X);
+    setCell(&board, 2, 2, CELL_X);
+    assert(!hasPlayerWon(&board, PLAYER_X));
+    assert(!hasPlayerWon(&board, PLAYER_O));
+    destroyGameBoard(&board);
+    printf("\n");
+
+    printf("K=1:\n");
+    board = createGameBoard(4, 3, 1);
+    setCell(&board, 1, 1, CELL_O);
+    assert(hasPlayerWon(&board, PLAYER_O));
+    assert(!hasPlayerWon(&board, PLAYER_X));
+    destroyGameBoard(&board);
+    printf("\n");
+
+    printf("K>M>=N:\n");
+    board = createGameBoard(4, 3, 5);
+    setCell(&board, 0, 1, CELL_O);
+    setCell(&board, 1, 1, CELL_O);
+    setCell(&board, 2, 1, CELL_O);
+    setCell(&board, 3, 1, CELL_O);
+    assert(!hasPlayerWon(&board, PLAYER_X));
+    assert(!hasPlayerWon(&board, PLAYER_O));
+    destroyGameBoard(&board);
+    printf("\n");
+}
+
+
 /* Tests displayGameBoard(). */
 static void displayGameBoardTest(void)
 {
@@ -235,12 +393,14 @@ static void displayGameBoardTest(void)
     board = createGameBoard(1, 1, 1);
     setCell(&board, 0, 0, CELL_X);
     displayGameBoard(&board);
+    destroyGameBoard(&board);
     printf("\n");
 
     printf("1x2 board:\n");
     board = createGameBoard(1, 2, 2);
     setCell(&board, 0, 1, CELL_O);
     displayGameBoard(&board);
+    destroyGameBoard(&board);
     printf("\n");
 
     printf("2x1 board:\n");
@@ -248,6 +408,7 @@ static void displayGameBoardTest(void)
     setCell(&board, 1, 0, CELL_O);
     setCell(&board, 0, 0, CELL_X);
     displayGameBoard(&board);
+    destroyGameBoard(&board);
     printf("\n");
 
     printf("2x2 board:\n");
@@ -255,6 +416,7 @@ static void displayGameBoardTest(void)
     setCell(&board, 0, 0, CELL_O);
     setCell(&board, 1, 0, CELL_X);
     displayGameBoard(&board);
+    destroyGameBoard(&board);
     printf("\n");
 
     printf("Large board:\n");
@@ -265,6 +427,7 @@ static void displayGameBoardTest(void)
     setCell(&board, 3, 6, CELL_X);
     setCell(&board, 4, 6, CELL_O);
     displayGameBoard(&board);
+    destroyGameBoard(&board);
     printf("\n");
 }
 
@@ -291,6 +454,7 @@ void boardTest(void)
     runUnitTest("inBoard bounds()", inBoardBoundsTest);
     runUnitTest("setCell() and getCell()", setGetCellTest);
     runUnitTest("clearCells()", clearCellsTest);
+    runUnitTest("hasPlayerWon()", hasPlayerWonTest);
     runUnitTest("displayGameBoard()", displayGameBoardTest);
     runUnitTest("playerToCell()", playerToCellTest);
 }

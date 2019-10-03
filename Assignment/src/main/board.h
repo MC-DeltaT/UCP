@@ -39,7 +39,7 @@ GameBoard zeroedGameBoard(void);
 /* Creates a game board from the given parameters.
    rows, columns and winRequirement must all be >0. */
 GameBoard createGameBoard(unsigned rows, unsigned columns,
-                          unsigned winRequirement);
+    unsigned winRequirement);
 
 /* Destroys a game board (deallocates resources, etc.). */
 void destroyGameBoard(GameBoard* board);
@@ -47,11 +47,8 @@ void destroyGameBoard(GameBoard* board);
 /* Sets all cells of a board to CELL_EMPTY. */
 void clearCells(GameBoard* board);
 
-/* Checks if Xs has won on the given board. */
-int hasXWon(GameBoard const* board);
-
-/* Checks if Os has won on the given board. */
-int hasOWon(GameBoard const* board);
+/* Checks if the given player has won on a board. */
+int hasPlayerWon(GameBoard const* board, Player player);
 
 /* Checks if the given row and column are within the bounds of the board. */
 int inBoardBounds(GameBoard const* board, unsigned row, unsigned column);
@@ -59,7 +56,7 @@ int inBoardBounds(GameBoard const* board, unsigned row, unsigned column);
 /* Sets the status of a board cell.
    row and column must be within the bounds of the board. */
 void setCell(GameBoard* board, unsigned row, unsigned column,
-             CellStatus status);
+    CellStatus status);
 
 /* Gets the status of a board cell.
    row and column must be within the bounds of the board. */
