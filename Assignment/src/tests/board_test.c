@@ -365,6 +365,39 @@ static void hasPlayerWonTest(void)
     assert(!hasPlayerWon(&board, PLAYER_X));
     assert(!hasPlayerWon(&board, PLAYER_O));
     destroyGameBoard(&board);
+
+    /* Bug found through manual testing. */
+    board = createGameBoard(3, 3, 3);
+    setBoardCell(&board, 0, 0, CELL_X);
+    setBoardCell(&board, 0, 2, CELL_X);
+    setBoardCell(&board, 1, 2, CELL_X);
+    setBoardCell(&board, 2, 1, CELL_X);
+    assert(!hasPlayerWon(&board, PLAYER_X));
+    assert(!hasPlayerWon(&board, PLAYER_O));
+    destroyGameBoard(&board);
+
+    /* Lots of cells marked, but no win. */
+    board = createGameBoard(6, 5, 3);
+    setBoardCell(&board, 0, 0, CELL_X);
+    setBoardCell(&board, 0, 1, CELL_O);
+    setBoardCell(&board, 0, 2, CELL_O);
+    setBoardCell(&board, 0, 3, CELL_X);
+    setBoardCell(&board, 1, 2, CELL_X);
+    setBoardCell(&board, 1, 4, CELL_O);
+    setBoardCell(&board, 2, 0, CELL_O);
+    setBoardCell(&board, 2, 1, CELL_O);
+    setBoardCell(&board, 2, 3, CELL_X);
+    setBoardCell(&board, 2, 0, CELL_X);
+    setBoardCell(&board, 3, 2, CELL_X);
+    setBoardCell(&board, 3, 3, CELL_O);
+    setBoardCell(&board, 4, 1, CELL_O);
+    setBoardCell(&board, 4, 4, CELL_X);
+    setBoardCell(&board, 5, 0, CELL_O);
+    setBoardCell(&board, 5, 2, CELL_X);
+    setBoardCell(&board, 5, 3, CELL_O);
+    assert(!hasPlayerWon(&board, PLAYER_X));
+    assert(!hasPlayerWon(&board, PLAYER_O));
+    destroyGameBoard(&board);
 }
 
 

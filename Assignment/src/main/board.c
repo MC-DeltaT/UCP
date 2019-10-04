@@ -106,6 +106,7 @@ static int hasWonRisingDiagonal(GameBoard const* board, CellStatus status)
             j = diagonal + 1u - board->rows;
         }
 
+        consecutive = 0;
         /* Scan up to top right of diagonal. */
         while (i >= 0 && inBoardBounds(board, i, j) && !win)
         {
@@ -155,6 +156,7 @@ static int hasWonFallingDiagonal(GameBoard const* board, CellStatus status)
             j = 0;
         }
 
+        consecutive = 0;
         /* Scan down to bottom right of diagonal. */
         while (inBoardBounds(board, i, j) && !win)
         {
