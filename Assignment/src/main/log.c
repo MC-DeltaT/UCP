@@ -64,6 +64,7 @@ static GameLog* createGameLog(unsigned long gameNum)
 static void destroyGameLog(GameLog** gameLog)
 {
     listFreeAndRemoveAll(&(*gameLog)->turns);
+    free(*gameLog);
     *gameLog = NULL;
 }
 
