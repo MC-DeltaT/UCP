@@ -58,7 +58,7 @@ TEST_REQ_OBJ := $(addprefix $(MAIN_OBJ_DIR)/, $(TEST_REQ_OBJ))
 $(MAIN_EXEC) : $(MAIN_OBJ)
 	$(MAIN_CC) $^ -o $@
 
-$(MAIN_OBJ_DIR)/main.o : $(call MAIN_SRC, main.c interface.h settings.h) \
+$(MAIN_OBJ_DIR)/main.o : $(call MAIN_SRC, main.c common.h interface.h log.h settings.h) \
 						| $(MAIN_OBJ_DIR)
 	$(MAIN_CC) -c $< -o $@
 

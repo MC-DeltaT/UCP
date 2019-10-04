@@ -1,6 +1,7 @@
 /* Program entry point. */
 
 #include "interface.h"
+#include "log.h"
 #include "settings.h"
 
 #include <stdio.h>
@@ -41,6 +42,8 @@ int main(int argc, char* argv[])
     {
         mainMenu(&settings);
     }
+
+    freeGameLogs();
 
     return 0;
 }

@@ -228,6 +228,8 @@ static int runGame(Settings* settings)
         printf("draw.\n");
     }
 
+    destroyGameBoard(&board);
+
     return 0;
 }
 

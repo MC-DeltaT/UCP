@@ -18,8 +18,8 @@
 void newGameLog(void);
 
 /* Removes and frees the internally stored game logs.
-   Must be called before the end of the program otherwise there will be a memory
-   leak. */
+   If any logs are created through newGameLog(), this must be called before the
+   end of the program otherwise there will be a memory leak. */
 void freeGameLogs(void);
 
 /* Logs a player's turn to the current game log. */
