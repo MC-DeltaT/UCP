@@ -271,7 +271,7 @@ static int saveLogs(Settings* settings)
         time->tm_mday, time->tm_mon + 1);
     assert(res > 0);
 
-    printf("Saving logs to file %s ...", fileName);
+    printf("Saving logs to file %s ...\n", fileName);
     file = fopen(fileName, "w");
     if (file)
     {
@@ -285,7 +285,7 @@ static int saveLogs(Settings* settings)
         }
         else
         {
-            printf(" success\n");
+            printf("Success.\n");
         }
 
         fclose(file);
