@@ -1,4 +1,6 @@
-/* Unit tests for the linked list module. */
+/* Unit tests for the linked list module.
+   Majority of test code taken from my practical 7 submission, with minor
+   adjustments. */
 
 #include "linked_list_test.h"
 

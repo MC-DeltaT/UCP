@@ -1,3 +1,7 @@
+/* Generic linked list data structure.
+   Majority of code taken from my practical 7 submission, with minor
+   adjustments. */
+
 #ifndef LINKED_LIST_H
 #define LINKED_LIST_H
 
