@@ -28,7 +28,7 @@ static int hasWonRow(GameBoard const* board, CellStatus status)
         j = 0;
         while (j < board->columns && consecutive < board->winRequirement)
         {
-            if (getCell(board, i, j) == status)
+            if (getBoardCell(board, i, j) == status)
             {
                 ++consecutive;
             }
@@ -61,7 +61,7 @@ static int hasWonColumn(GameBoard const* board, CellStatus status)
         i = 0;
         while (i < board->rows && consecutive < board->winRequirement)
         {
-            if (getCell(board, i, j) == status)
+            if (getBoardCell(board, i, j) == status)
             {
                 ++consecutive;
             }
@@ -109,7 +109,7 @@ static int hasWonRisingDiagonal(GameBoard const* board, CellStatus status)
         /* Scan up to top right of diagonal. */
         while (i >= 0 && inBoardBounds(board, i, j) && !win)
         {
-            if (getCell(board, i, j) == status)
+            if (getBoardCell(board, i, j) == status)
             {
                 ++consecutive;
             }
@@ -158,7 +158,7 @@ static int hasWonFallingDiagonal(GameBoard const* board, CellStatus status)
         /* Scan down to bottom right of diagonal. */
         while (inBoardBounds(board, i, j) && !win)
         {
-            if (getCell(board, i, j) == status)
+            if (getBoardCell(board, i, j) == status)
             {
                 ++consecutive;
             }
@@ -207,7 +207,7 @@ GameBoard createGameBoard(unsigned rows, unsigned columns,
     board.columns = columns;
     board.winRequirement = winRequirement;
 
-    clearCells(&board);
+    clearBoardCells(&board);
 
     return board;
 }
@@ -223,7 +223,7 @@ void destroyGameBoard(GameBoard* board)
 }
 
 
-void clearCells(GameBoard* board)
+void clearBoardCells(GameBoard* board)
 {
     unsigned i = 0;
     unsigned j = 0;
@@ -232,7 +232,7 @@ void clearCells(GameBoard* board)
     {
         for (j = 0; j < board->columns; ++j)
         {
-            setCell(board, i, j, CELL_EMPTY);
+            setBoardCell(board, i, j, CELL_EMPTY);
         }
     }
 }
@@ -265,7 +265,7 @@ int inBoardBounds(GameBoard const* board, unsigned row, unsigned column)
 }
 
 
-void setCell(GameBoard* board, unsigned row, unsigned column, CellStatus status)
+void setBoardCell(GameBoard* board, unsigned row, unsigned column, CellStatus status)
 {
     assert(inBoardBounds(board, row, column));
 
@@ -273,7 +273,7 @@ void setCell(GameBoard* board, unsigned row, unsigned column, CellStatus status)
 }
 
 
-CellStatus getCell(GameBoard const* board, unsigned row, unsigned column)
+CellStatus getBoardCell(GameBoard const* board, unsigned row, unsigned column)
 {
     assert(inBoardBounds(board, row, column));
 
@@ -305,7 +305,7 @@ void displayGameBoard(GameBoard const* board)
         printf("|");
         for (j = 0; j < board->columns; ++j)
         {
-            switch (getCell(board, i, j))
+            switch (getBoardCell(board, i, j))
             {
                 case CELL_X:
                     cell = X_CHAR;

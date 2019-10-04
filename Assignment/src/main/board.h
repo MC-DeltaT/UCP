@@ -45,7 +45,7 @@ GameBoard createGameBoard(unsigned rows, unsigned columns,
 void destroyGameBoard(GameBoard* board);
 
 /* Sets all cells of a board to CELL_EMPTY. */
-void clearCells(GameBoard* board);
+void clearBoardCells(GameBoard* board);
 
 /* Checks if the given player has won on a board. */
 int hasPlayerWon(GameBoard const* board, Player player);
@@ -55,12 +55,12 @@ int inBoardBounds(GameBoard const* board, unsigned row, unsigned column);
 
 /* Sets the status of a board cell.
    row and column must be within the bounds of the board. */
-void setCell(GameBoard* board, unsigned row, unsigned column,
+void setBoardCell(GameBoard* board, unsigned row, unsigned column,
     CellStatus status);
 
 /* Gets the status of a board cell.
    row and column must be within the bounds of the board. */
-CellStatus getCell(GameBoard const* board, unsigned row, unsigned column);
+CellStatus getBoardCell(GameBoard const* board, unsigned row, unsigned column);
 
 /* Prints a game board to stdout. */
 void displayGameBoard(GameBoard const* board);

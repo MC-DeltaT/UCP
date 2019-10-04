@@ -160,7 +160,7 @@ static void playerTurn(GameBoard* board, Player player)
         {
             fprintf(stderr, "Error: coordinate out of bounds.\n");
         }
-        else if (getCell(board, row, column) != CELL_EMPTY)
+        else if (getBoardCell(board, row, column) != CELL_EMPTY)
         {
             fprintf(stderr, "Error: cell already occupied.\n");
         }
@@ -170,7 +170,7 @@ static void playerTurn(GameBoard* board, Player player)
         }
     } while(!validCoordinate);
 
-    setCell(board, row, column, playerToCell(player));
+    setBoardCell(board, row, column, playerToCell(player));
     logTurn(player, row, column);
 }
 
