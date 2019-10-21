@@ -24,7 +24,7 @@ TEST_REQ_OBJ = board.o common.o linked_list.o log.o settings.o
 COMPILER = gcc
 
 # Basic C compilation options.
-BASE_FLAGS = -ansi -pedantic -Wall -Werror
+BASE_FLAGS = -ansi -pedantic -Wall -Werror -std=c89
 # C compilation options for main project code.
 MAIN_FLAGS = $(BASE_FLAGS)
 # C compilation options for test code.
